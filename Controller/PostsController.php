@@ -5,6 +5,7 @@ namespace ILostIt\Controller;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ILostIt\Model\PostsModel;
+use Slim\Views\PhpRenderer;
 
 class PostsController
 {
@@ -21,22 +22,19 @@ class PostsController
         // Get the link params
         $params = $request->getQueryParams();
 
-        $filters = array(["active", "=", 1]);
+        $filters = array(["status", "=", 0]);
 
-        if (isset($params['search'])) {
-            array_push($filters, array("title", "LIKE", "%" . $params['search'] . "%"));
-        }
-
-        if (isset($params['location'])) {
-            array_push($filters, array("location", "=", $params['location']));
+        if (isset($params['type'])) {
+            array_push($filters, array("type", "=", $params['type']));
         }
 
         $postsModel = new PostsModel();
         $posts = $postsModel->getPosts($filters);
 
-        require_once 'View/posts.php';
+        $render = new PhpRenderer(__DIR__ . '/../View', ['title' => 'Accueil']);
+        $render->setLayout('gabarit.php');
 
-        return $response;
+        return $render->render($response, 'posts.php', ["posts" => $posts]);
     }
 
     /**
