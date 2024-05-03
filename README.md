@@ -8,11 +8,9 @@ This project is a web app designed to help students and teachers from the CPNV (
 ### Prerequesites
 
 - MariaDB v10.11.7 (LTS)
-- Visual Studio Code (latest)
-- PHP v8.3.4
+- PhpStorm 2024.1.1
+- PHP v8.3.6
 - Composer v2.7.3
-- MacOS Sonoma 14.3.1
-- Docker (latest) (for development database only but not required. If you want to use the final MariaDB server directly, you can)
 
 ### Configuration
 
@@ -51,11 +49,11 @@ TBD
 
 ## Collaborate
 
-Currently, I won't accept any collaboration on this project.
+TBD
 
 ## License
 
-TBD
+[MIT License](https://github.com/CPNV-TPI/ILostIt/blob/develop/LICENSE)
 
 ## Contact
 
