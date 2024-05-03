@@ -17,8 +17,8 @@ $methodOverrideMiddleware = new MethodOverrideMiddleware();
 $app->add($methodOverrideMiddleware);
 
 # Home route
-$app->get('/', [\ILostIt\Controller\HomeController::class, 'index'])->setName('Home');
-$app->redirect('/home', '/');
+$app->get('/', [\ILostIt\Controller\HomeController::class, 'index'])->setName('Accueil');
+$app->redirect('/accueil', '/');
 
 # Posts route
 $app->group('/posts', function (RouteCollectorProxy $group) {
@@ -32,6 +32,6 @@ $app->group('/posts', function (RouteCollectorProxy $group) {
 });
 
 $app->addBodyParsingMiddleware();
-$errorMiddleware = $app->addErrorMiddleware(false, true, true);
+$errorMiddleware = $app->addErrorMiddleware(true, true, true);
 
 $app->run();
