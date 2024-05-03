@@ -1,0 +1,15 @@
+{
+    "require": {
+        "slim/slim":"4.*",
+        "slim/psr7": "^1.6",
+        "ext-pdo": "*"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "@stable"
+    },
+    "autoload": {
+        "psr-4": {
+            "ILostIt\\": "./"
+        }
+    }
+}
