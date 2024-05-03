@@ -14,7 +14,7 @@ class PostsModel
      */
     public function getPosts(array $filters): array
     {
-        $columns = array("id", "title", "desc", "location");
+        $columns = array("id", "title", "description", "classroomNumber");
 
         $db = new Database();
         $posts = $db->select($this->dbTable, $columns, $filters);
