@@ -1,5 +1,7 @@
 <?php
+
 namespace ILostIt\View;
+
 ?>
 
 <div class="home">
@@ -10,7 +12,7 @@ namespace ILostIt\View;
             <div class="desc">Les dernières publications :</div>
 
             <div class="slider">
-                <div class="splide slider-last-posts md:w-7/9 mx-auto">
+                <div class="splide slider-last-posts md:w-7/9 mx-auto" id="sliderHome">
                     <div class="splide__track">
                         <ul class="splide__list">
                             <li class="splide__slide">
@@ -27,9 +29,43 @@ namespace ILostIt\View;
                 </div>
             </div>
 
-            <?php if(!isset($_SESSION)): ?>
+            <?php if (!isset($_SESSION)) : ?>
                 <a href="/posts" class="bg-primary px-20 py-5 text-white">Voir plus</a>
             <?php endif; ?>
         </div>
     </div>
 </div>
+
+<script>
+    /* Last posts slider - Home */
+    let sliderHome = new Splide('#sliderHome', {
+        type: 'loop',
+        pagination: false,
+        perMove: 1
+    })
+
+    function changeNbOfPostsBasedOnWidth()
+    {
+        if (window.innerWidth > 425) {
+            sliderHome.options.perPage = 2
+        }
+
+        if (window.innerWidth > 768) {
+            sliderHome.options.perPage = 3
+        }
+
+        if (window.innerWidth <= 425) {
+            sliderHome.options.perPage = 1
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        changeNbOfPostsBasedOnWidth()
+    })
+
+    window.onresize = () => {
+        changeNbOfPostsBasedOnWidth()
+    }
+
+    sliderHome.mount()
+</script>
