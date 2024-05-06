@@ -17,7 +17,7 @@ class PostsController
      * @param  array $args
      * @return ResponseInterface
      */
-    public function get(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    public function index(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         // Get the link params
         $params = $request->getQueryParams();
@@ -35,6 +35,27 @@ class PostsController
         $render->setLayout('gabarit.php');
 
         return $render->render($response, 'posts.php', ["posts" => $posts]);
+    }
+
+    public function postPage(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
+        // Get the link params
+        $params = $request->getQueryParams();
+
+        $filters = array(["id", "=", $args['id']]);
+
+        $postsModel = new PostsModel();
+        $post = $postsModel->getPosts($filters)[0];
+
+        $post['images'] = json_decode($post['images']);
+
+        $render = new PhpRenderer(__DIR__ . '/../View', ['title' => $post['title']]);
+        $render->setLayout('gabarit.php');
+
+        return $render->render($response, 'post.php', ["post" => $post]);
     }
 
     /**
