@@ -22,13 +22,20 @@ $app->redirect('/accueil', '/');
 
 # Posts route
 $app->group('/posts', function (RouteCollectorProxy $group) {
-    $group->get('', [\ILostIt\Controller\PostsController::class, 'get']);
+    $group->get('', [\ILostIt\Controller\PostsController::class, 'index']);
+
+    $group->get('/{id}', [\ILostIt\Controller\PostsController::class, 'postPage']);
 
     $group->post('', [\ILostIt\Controller\PostsController::class, 'post']);
 
     $group->patch('/{id}', [\ILostIt\Controller\PostsController::class, 'patch']);
 
     $group->delete('/{id}', [\ILostIt\Controller\PostsController::class, 'delete']);
+});
+
+# Mod route
+$app->group('/mod', function (RouteCollectorProxy $group) {
+    $group->get('', [\ILostIt\Controller\ModController::class, 'get']);
 });
 
 $app->addBodyParsingMiddleware();
