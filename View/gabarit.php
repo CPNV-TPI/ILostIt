@@ -17,10 +17,13 @@ $links = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>I Lost It - <?=$title?></title>
-    <link rel="stylesheet" href="src/css/main.css">
+    <link rel="stylesheet" href="../src/css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Istok+Web:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Istok+Web:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet"
+    >
     <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
     <script src="https://kit.fontawesome.com/d8302aa554.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
@@ -36,9 +39,11 @@ $links = [
             <div
                 class="
                     links
-                    absolute z-50 hidden flex-col top-0 mt-11 w-full bg-white text-center -ml-3 shadow-2xl divide-solid divide-black divide-y
+                    absolute z-50 hidden flex-col top-0 mt-11 w-full bg-white text-center -ml-3 shadow-2xl
+                    divide-solid divide-black divide-y
                     md:w-2/4 md:right-0
-                    lg:block lg:space-x-5 lg:block lg:relative lg:m-0 lg:w-auto lg:shadow-none lg:bg-transparent lg:divide-y-0 lg:text-white
+                    lg:block lg:space-x-5 lg:block lg:relative lg:m-0 lg:w-auto lg:shadow-none lg:bg-transparent
+                    lg:divide-y-0 lg:text-white
                 "
             >
                 <?php foreach ($links as $link) : ?>
@@ -114,6 +119,6 @@ $links = [
         </div>
     </dialog>
 
-    <script src="src/js/app.js"></script>
+    <script src="../src/js/app.js"></script>
 </body>
 </html>
