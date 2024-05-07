@@ -4,8 +4,8 @@ namespace ILostIt\View;
 
 $links = [
     ["Accueil", "/", -1],
-    ["Se connecter", "/login", 0],
-    ["S'enregistrer", "/login", 0],
+    ["Se connecter", "/auth/login", 0],
+    ["S'enregistrer", "/auth/register", 0],
     ["Publications", "/objects", 1],
     ["Les objets retrouvés", "/found-objects", 1],
 ]
@@ -51,11 +51,11 @@ $links = [
                         <a class="py-4 lg:py-0" href=<?=$link[1]?>><?=$link[0]?></a>
                     <?php endif; ?>
 
-                    <?php if (isset($_SESSION) && $link[2] == 0) : ?>
+                    <?php if (!isset($_SESSION) && $link[2] == 0) : ?>
                         <a class="py-4 lg:py-0" href=<?=$link[1]?>><?=$link[0]?></a>
                     <?php endif; ?>
 
-                    <?php if (!isset($_SESSION) && $link[2] == 1) : ?>
+                    <?php if (isset($_SESSION) && $link[2] == 1) : ?>
                         <a class="py-4 lg:py-0" href=<?=$link[1]?>><?=$link[0]?></a>
                     <?php endif; ?>
                 <?php endforeach; ?>
@@ -64,7 +64,7 @@ $links = [
                     <a href="/mod">Publications en attente></a>
                 <?php endif; ?>
 
-                <?php if (!isset($_SESSION)) : ?>
+                <?php if (isset($_SESSION)) : ?>
                     <button id="post_btn" class="px-2 py-4 lg:py-px">Publier une annonce</button>
                 <?php endif;?>
             </div>
