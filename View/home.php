@@ -30,7 +30,9 @@ namespace ILostIt\View;
             </div>
 
             <?php if (!isset($_SESSION)) : ?>
-                <a href="/posts" class="bg-primary px-20 py-5 text-white">Voir plus</a>
+                <div class="see-more">
+                    <a href="/posts" class="bg-primary px-20 py-5 text-white">Voir plus</a>
+                </div>
             <?php endif; ?>
         </div>
     </div>
