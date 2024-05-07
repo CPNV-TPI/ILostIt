@@ -18,19 +18,19 @@ $app->add($methodOverrideMiddleware);
 
 # Home route
 $app->get('/', [\ILostIt\Controller\HomeController::class, 'index'])->setName('Accueil');
-$app->redirect('/accueil', '/');
+$app->redirect('/home', '/');
 
 # Posts route
-$app->group('/posts', function (RouteCollectorProxy $group) {
-    $group->get('', [\ILostIt\Controller\PostsController::class, 'index']);
+$app->group('/objects', function (RouteCollectorProxy $group) {
+    $group->get('', [\ILostIt\Controller\ObjectsController::class, 'index']);
 
-    $group->get('/{id}', [\ILostIt\Controller\PostsController::class, 'postPage']);
+    $group->get('/{id}', [\ILostIt\Controller\ObjectsController::class, 'objectPage']);
 
-    $group->post('', [\ILostIt\Controller\PostsController::class, 'post']);
+    $group->post('', [\ILostIt\Controller\ObjectsController::class, 'post']);
 
-    $group->patch('/{id}', [\ILostIt\Controller\PostsController::class, 'patch']);
+    $group->patch('/{id}', [\ILostIt\Controller\ObjectsController::class, 'patch']);
 
-    $group->delete('/{id}', [\ILostIt\Controller\PostsController::class, 'delete']);
+    $group->delete('/{id}', [\ILostIt\Controller\ObjectsController::class, 'delete']);
 });
 
 # Mod route
