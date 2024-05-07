@@ -49,11 +49,17 @@ TBD
 ```
 └── DDS_PreTPI_ILostIt/
     ├── Controller
+    ├── database           # Contains DB related scripts
+    ├── docs
+        ├── database       # Contains MCD - MLD
+        ├── design         # Contains mockups and graphical charter
     ├── Model
-    ├── View
-    └── src/
+    ├── tests              # Contains code tests
+    ├── src/
         ├── css
+        ├── img
         └── js
+    └── View
 ```
 
 ## Collaborate
