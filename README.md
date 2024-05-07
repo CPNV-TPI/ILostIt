@@ -23,6 +23,15 @@ DB_PORT="" # Generally 3306
 DB_NAME=""
 DB_USER=""
 DB_PASSWORD="THE_USER_PASSWORD"
+
+MAIL_SMTP_HOST="HOSTNAME"
+MAIL_SMTP_PORT="" # Generally 465
+MAIL_USER=""
+MAIL_PASSWORD="THE_USER_PASSWORD"
+# https://console.cloud.google.com/apis/credentials
+MAIL_GOOGLE_CLIENT_ID=""
+MAIL_GOOGLE_CLIENT_SECRET=""
+MAIL_GOOGLE_REFRESH_TOKEN="" 
 ````
 
 ## Deployment
