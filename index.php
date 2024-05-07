@@ -17,21 +17,28 @@ $methodOverrideMiddleware = new MethodOverrideMiddleware();
 $app->add($methodOverrideMiddleware);
 
 # Home route
-$app->get('/', [\ILostIt\Controller\HomeController::class, 'index'])->setName('Home');
+$app->get('/', [\ILostIt\Controller\HomeController::class, 'index'])->setName('Accueil');
 $app->redirect('/home', '/');
 
 # Posts route
-$app->group('/posts', function (RouteCollectorProxy $group) {
-    $group->get('', [\ILostIt\Controller\PostsController::class, 'get']);
+$app->group('/objects', function (RouteCollectorProxy $group) {
+    $group->get('', [\ILostIt\Controller\ObjectsController::class, 'index']);
 
-    $group->post('', [\ILostIt\Controller\PostsController::class, 'post']);
+    $group->get('/{id}', [\ILostIt\Controller\ObjectsController::class, 'objectPage']);
 
-    $group->patch('/{id}', [\ILostIt\Controller\PostsController::class, 'patch']);
+    $group->post('', [\ILostIt\Controller\ObjectsController::class, 'post']);
 
-    $group->delete('/{id}', [\ILostIt\Controller\PostsController::class, 'delete']);
+    $group->patch('/{id}', [\ILostIt\Controller\ObjectsController::class, 'patch']);
+
+    $group->delete('/{id}', [\ILostIt\Controller\ObjectsController::class, 'delete']);
+});
+
+# Mod route
+$app->group('/mod', function (RouteCollectorProxy $group) {
+    $group->get('', [\ILostIt\Controller\ModController::class, 'get']);
 });
 
 $app->addBodyParsingMiddleware();
-$errorMiddleware = $app->addErrorMiddleware(false, true, true);
+$errorMiddleware = $app->addErrorMiddleware(true, true, true);
 
 $app->run();

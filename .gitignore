@@ -1,2 +1,9 @@
+# Ignore IDE folder
+.idea/
+
 # Ignore vendor folder as there is a composer.json file
 /vendor
+
+# Ignore .env files
+.env
+.env.*
