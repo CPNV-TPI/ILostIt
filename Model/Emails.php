@@ -62,7 +62,7 @@ class Emails
     {
         $mail = new PHPMailer(true);
 
-        $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+        $mail->SMTPDebug = SMTP::DEBUG_OFF;
         $mail->isSMTP();
         $mail->Host = $this->host;
         $mail->SMTPAuth = true;
