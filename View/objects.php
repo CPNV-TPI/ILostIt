@@ -15,14 +15,15 @@ namespace ILostIt\View;
             posts w-5/6 mx-auto flex flex-wrap justify-between gap-y-5 items-center mt-10
             md:w-11/12 md:justify-evenly
         ">
-            <?php if (count($posts) == 0) : ?>
+            <?php if (count($objects) == 0) : ?>
                 <div class="no-posts text-center text-xl">Aucune publications trouvées...</div>
             <?php else : ?>
-                <?php foreach ($posts as $post) :
-                        $postId = $post['id'];
-                        $classroomNumber = $post['classroomNumber'];
-                        $title = $post['title'];
-                        $description = $post['description'];
+                <?php foreach ($objects as $object) :
+                        $objectId = $object['id'];
+                        $image = json_decode($object['image'])[0];
+                        $classroom = $object['classroom'];
+                        $title = $object['title'];
+                        $description = $object['description'];
                     ?>
                     <?php require('components/post.php'); ?>
                 <?php endforeach; ?>
