@@ -2,9 +2,9 @@
 
 namespace ILostIt\Model;
 
-class PostsModel
+class Objects
 {
-    private string $dbTable = "Posts";
+    private string $dbTable = "objects";
 
     /**
      * This method is designed to get all posts from database.
@@ -12,9 +12,9 @@ class PostsModel
      * @param  array $filters
      * @return array
      */
-    public function getPosts(array $filters): array
+    public function getObjects(array $filters): array
     {
-        $columns = array("id", "title", "description", "classroomNumber", "images");
+        $columns = array("id", "title", "description", "image", "classroom", "brand", "color", "value");
 
         $db = new Database();
         $posts = $db->select($this->dbTable, $columns, $filters);
@@ -31,7 +31,7 @@ class PostsModel
      * @param  array $values
      * @return bool
      */
-    public function publishPost(array $values): bool
+    public function publishObject(array $values): bool
     {
         $db = new Database();
         $status = $db->insert($this->dbTable, $values);
@@ -53,7 +53,7 @@ class PostsModel
      * @param  array $values
      * @return bool
      */
-    public function updatePost(string $postId, array $values): bool
+    public function updateObject(string $postId, array $values): bool
     {
         $conditions = array(["id", "=", $postId]);
 
@@ -77,7 +77,7 @@ class PostsModel
      * @param  string $postId
      * @return bool
      */
-    public function deletePost(string $postId): bool
+    public function deleteObject(string $postId): bool
     {
         $conditions = array(["id", "=", $postId]);
 
