@@ -4,7 +4,7 @@ namespace ILostIt\Controller;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use ILostIt\Model\PostsModel;
+use ILostIt\Model\Objects;
 use Slim\Views\PhpRenderer;
 
 class ModController
