@@ -4,13 +4,13 @@ namespace ILostIt\Controller;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use ILostIt\Model\PostsModel;
+use ILostIt\Model\Objects;
 use Slim\Views\PhpRenderer;
 
-class PostsController
+class ObjectsController
 {
     /**
-     * Returns the Posts page
+     * Returns the objects page
      *
      * @param  ServerRequestInterface $request
      * @param  ResponseInterface $response
@@ -22,22 +22,22 @@ class PostsController
         // Get the link params
         $params = $request->getQueryParams();
 
-        $filters = array(["status", "=", 0]);
+        $filters = array(["status", "=", 1]);
 
         if (isset($params['type'])) {
             array_push($filters, array("type", "=", $params['type']));
         }
 
-        $postsModel = new PostsModel();
-        $posts = $postsModel->getPosts($filters);
+        $objectsModel = new Objects();
+        $objects = $objectsModel->getObjects($filters);
 
         $render = new PhpRenderer(__DIR__ . '/../View', ['title' => 'Accueil']);
         $render->setLayout('gabarit.php');
 
-        return $render->render($response, 'posts.php', ["posts" => $posts]);
+        return $render->render($response, 'objects.php', ["objects" => $objects]);
     }
 
-    public function postPage(
+    public function objectPage(
         ServerRequestInterface $request,
         ResponseInterface $response,
         array $args
@@ -47,48 +47,48 @@ class PostsController
 
         $filters = array(["id", "=", $args['id']]);
 
-        $postsModel = new PostsModel();
-        $post = $postsModel->getPosts($filters)[0];
+        $objectsModel = new Objects();
+        $object = $objectsModel->getObjects($filters)[0];
 
-        $post['images'] = json_decode($post['images']);
+        $object['image'] = json_decode($object['image']);
 
-        $render = new PhpRenderer(__DIR__ . '/../View', ['title' => $post['title']]);
+        $render = new PhpRenderer(__DIR__ . '/../View', ['title' => $object['title']]);
         $render->setLayout('gabarit.php');
 
-        return $render->render($response, 'post.php', ["post" => $post]);
+        return $render->render($response, 'object.php', ["object" => $object]);
     }
 
     /**
-     * Handler for route /posts via POST method
+     * Handler for route /objects via POST method
      *
      * @param  ServerRequestInterface $request
      * @param  ResponseInterface $response
      * @param  array $args
      * @return ResponseInterface
      */
-    public function post(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    public function object(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $body = $request->getParsedBody();
         $values = array();
 
         foreach ($body as $key => $content) {
-            if ($key == 'title' || $key == 'desc' || $key == 'location') {
+            if ($key == 'title' || $key == 'description' || $key == 'classroom') {
                 $values = array_merge($values, array($key => $content));
             }
         }
 
-        $postsModel = new PostsModel();
-        $status = $postsModel->publishPost($values);
+        $objectsModel = new Objects();
+        $status = $objectsModel->publishObject($values);
 
         if ($status) {
-            return $response->withHeader('Location', '/posts')->withStatus(302);
+            return $response->withHeader('Location', '/objects')->withStatus(302);
         }
 
-        return $response->withHeader('Location', '/posts')->withStatus(500);
+        return $response->withHeader('Location', '/objects')->withStatus(500);
     }
 
     /**
-     * Handler for route /posts via PATCH method
+     * Handler for route /objects via PATCH method
      *
      * @param  ServerRequestInterface $request
      * @param  ResponseInterface $response
@@ -102,13 +102,13 @@ class PostsController
         $id = $args['id'];
 
         foreach ($body as $key => $content) {
-            if ($key == 'title' || $key == 'desc' || $key == 'location') {
+            if ($key == 'title' || $key == 'description' || $key == 'classroom') {
                 $values = array_merge($values, array($key => $content));
             }
         }
 
-        $postsModel = new PostsModel();
-        $status = $postsModel->updatePost($id, $values);
+        $objectsModel = new Objects();
+        $status = $objectsModel->updateObject($id, $values);
 
         if ($status) {
             return $response->withStatus(200);
@@ -118,7 +118,7 @@ class PostsController
     }
 
     /**
-     * Handler for route /posts via DELETE method
+     * Handler for route /objects via DELETE method
      *
      * @param  ServerRequestInterface $request
      * @param  ResponseInterface $response
@@ -129,10 +129,10 @@ class PostsController
     {
         $id = $args['id'];
 
-        $postsModel = new PostsModel();
-        $status = $postsModel->deletePost($id);
+        $objectsModel = new Objects();
+        $status = $objectsModel->deleteObject($id);
 
-        $response->getBody()->write("<script>window.location.replace('/posts');</script>");
+        $response->getBody()->write("<script>window.location.replace('/objects');</script>");
 
         if ($status) {
             return $response->withStatus(200);
