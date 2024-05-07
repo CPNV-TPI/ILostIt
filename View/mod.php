@@ -24,7 +24,7 @@ namespace ILostIt\View;
                         $title = $post['title'];
                         $description = $post['description'];
                     ?>
-                    <?php require('components/post.php'); ?>
+                    <?php require('components/object.php'); ?>
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
