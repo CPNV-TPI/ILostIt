@@ -1,18 +1,18 @@
 <?php
 
 
-use ILostIt\Model\Mail;
+use ILostIt\Model\Emails;
 use PHPUnit\Framework\TestCase;
 
-class TestMail extends TestCase
+class TestEmails extends TestCase
 {
     public function testCanSendEmail(): void
     {
         $email = "diogo.dasilva2@eduvaud.ch";
-        $subject = "TestMail Mail Send";
+        $subject = "TestEmails Emails Send";
         $message = "This a test mail sent by a unit test.";
 
-        $mailer = new Mail();
+        $mailer = new Emails();
 
         $response = $mailer->send($email, $message, $subject);
 

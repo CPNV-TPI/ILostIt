@@ -7,7 +7,7 @@ use PHPMailer\PHPMailer\OAuth;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 
-class Mail
+class Emails
 {
     private string $host = "";
     private string $port = "";
