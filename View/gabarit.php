@@ -6,7 +6,7 @@ $links = [
     ["Accueil", "/", -1],
     ["Se connecter", "/login", 0],
     ["S'enregistrer", "/login", 0],
-    ["Publications", "/posts", 1],
+    ["Publications", "/objects", 1],
     ["Les objets retrouvés", "/found-objects", 1],
 ]
 ?>
@@ -74,7 +74,7 @@ $links = [
     <?=$content?>
 
     <dialog id="post_dialog">
-        <div class="dialog p-5 w-[500px]">
+        <div class="dialog p-5 w-[300px] md:w-[500px]">
             <div class="title text-2xl text-center mb-5">Publier</div>
             <button
                     id="post_dialog_close"
@@ -82,7 +82,7 @@ $links = [
             >
                 X
             </button>
-            <form action="/posts" method="POST" class="space-y-5">
+            <form action="/objects" method="POST" class="space-y-5">
                 <div class="title">
                     <label
                             for="title"
@@ -92,27 +92,87 @@ $links = [
                     </label>
                     <input type="text" name="title" id="title" class="w-full border-2 p-2" required>
                 </div>
-                <div class="desc">
+                <div class="description">
                     <label
-                            for="desc"
+                            for="description"
                             class="mb-2 after:content-['*'] after:text-red-600 after:text-sm"
                     >
                         Description
                     </label>
-                    <textarea name="desc" id="desc" class="w-full resize-y border-2 p-2" required></textarea>
+                    <textarea
+                            name="description"
+                            id="description"
+                            class="w-full resize-y border-2 p-2"
+                            maxlength="500"
+                            required
+                    ></textarea>
                 </div>
-                <div class="location">
-                    <label
-                            for="location"
-                            class="mb-2 after:content-['*'] after:text-red-600 after:text-sm"
-                    >
-                        Location
-                    </label>
-                    <select name="location" id="location" class="border-2" required>
-                        <option value="Yverdon">Yverdon</option>
-                        <option value="Ste-Croix">Ste-Croix</option>
-                        <option value="Payerne">Payerne</option>
-                    </select>
+                <div class="attributes">
+                    <p class="border-b border-black mb-2">Attributs</p>
+
+                    <table>
+                        <tr>
+                            <td>
+                                <label
+                                        for="classroom"
+                                        class="mb-2 after:content-['*'] after:text-red-600 after:text-sm"
+                                >
+                                    Classe
+                                </label>
+                            </td>
+                            <td>
+                                <input type="text" name="classroom" id="classroom" class="w-[150px] border-2 p-2" required>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <label
+                                        for="brand"
+                                        class="mb-2"
+                                >
+                                    Marque
+                                </label>
+                            </td>
+                            <td>
+                                <input type="text" name="brand" id="brand" class="w-[150px] border-2 p-2">
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <label
+                                        for="color"
+                                        class="mb-2"
+                                >
+                                    Couleur
+                                </label>
+                            </td>
+                            <td>
+                                <input type="text" name="color" id="color" class="w-[150px] border-2 p-2">
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <label
+                                        for="value"
+                                        class="mb-2"
+                                >
+                                    Valeur
+                                </label>
+                            </td>
+                            <td>
+                                <input
+                                    type="text"
+                                    name="value"
+                                    id="value"
+                                    class="w-[150px] border-2 p-2"
+                                    pattern="^[0-9]{1,4}\.?[0-9]{1,2}$"
+                                >
+                            </td>
+                        </tr>
+                    </table>
                 </div>
                 <input type="submit" value="Poster" class="w-full p-2 bg-green-700 text-white cursor-pointer">
             </form>
