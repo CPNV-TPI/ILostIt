@@ -12,7 +12,7 @@ namespace ILostIt\View;
         </div>
 
         <?php if (count($object['image']) == 0) : ?>
-            <img src="../src/img/post_base_image.png" alt="" class="w-[200px] md:w-[300px] mx-auto shadow-md">
+            <img src="../src/img/base_image.png" alt="" class="w-[200px] md:w-[300px] mx-auto shadow-md">
         <?php endif; ?>
 
         <?php if (count($object['image']) == 1) : ?>
