@@ -51,4 +51,35 @@ class MembersController
 
         return $response->withHeader('Location', '/')->withStatus(302);
     }
+
+    public function verifyMemberPage(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
+        $attributes = ['title' => 'Vérifiez votre compte'];
+        $userIdToVerify = $args['id'];
+
+        $render = new PhpRenderer(__DIR__ . '/../View', $attributes);
+        $render->setLayout('gabarit.php');
+
+        return $render->render($response, 'verify.php', ['email' => $userIdToVerify]);
+    }
+
+    public function verifyMember(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
+        $userIdToVerify = $args['id'];
+
+        $members = new Members();
+        $result = $members->verifyUser($userIdToVerify);
+
+        if (!$result) {
+            return $response->withStatus(400);
+        }
+
+        return $response->withStatus(200);
+    }
 }
