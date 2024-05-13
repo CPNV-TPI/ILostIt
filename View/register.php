@@ -20,12 +20,12 @@ namespace ILostIt\View;
         <div class="email">
             <label for="email" class="after:content-['*'] after:text-red-600 after:text-sm">Email</label>
             <input
-                type="text"
+                type="email"
                 name="email"
                 id="email"
                 class="w-full border border-black p-2"
+                pattern="/([a-z]+)\.([a-z]+[-]*[0-9]*)+(@eduvaud\.ch)/g"
                 required
-                pattern="^([a-z]+)\.([a-z]+[-]*[0-9]*)+(\@eduvaud\.ch)$"
             >
         </div>
 
@@ -33,6 +33,12 @@ namespace ILostIt\View;
             <label for="password" class="after:content-['*'] after:text-red-600 after:text-sm">Mot de passe</label>
             <input type="password" name="password" id="password" class="w-full border border-black p-2" required>
         </div>
+
+        <?php if (isset($error)) : ?>
+            <div class="text-center text-red-600 text-lg">
+                <?=$error?>
+            </div>
+        <?php endif; ?>
 
         <input type="submit" value="Envoyer" class="w-full py-2 bg-primary text-white">
     </form>
