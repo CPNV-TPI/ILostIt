@@ -40,7 +40,9 @@ $app->group('/auth', function (RouteCollectorProxy $group) {
 
         $group->post('', [\ILostIt\Controller\MembersController::class, 'register']);
 
-        $group->patch('/validate', [\ILostIt\Controller\MembersController::class, 'validateRegister']);
+        $group->get('/verify/{id}', [\ILostIt\Controller\MembersController::class, 'verifyMemberPage']);
+
+        $group->patch('/verify/{id}', [\ILostIt\Controller\MembersController::class, 'verifyMember']);
     });
 
     $group->redirect('', '/auth/login');
