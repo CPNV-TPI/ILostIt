@@ -72,6 +72,7 @@ class Emails
         $mail->Port = $this->port;
         $mail->setFrom($this->username, "I Lost It");
         $mail->isHTML(true);
+        $mail->CharSet = "UTF-8";
 
         /* Google's SMTP */
 
