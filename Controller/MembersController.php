@@ -9,18 +9,25 @@ use Slim\Views\PhpRenderer;
 
 class MembersController
 {
-    public function register(
+    public function index(
         ServerRequestInterface $request,
         ResponseInterface $response,
-        array $args
+        array $args,
+        string $error = ""
     ): ResponseInterface {
-        $render = new PhpRenderer(__DIR__ . '/../View', ['title' => 'S\'enregistrer']);
+        $attributes = ['title' => 'S\'enregistrer'];
+
+        if ($error != "") {
+            $attributes = array_merge($attributes, ['error' => $error]);
+        }
+
+        $render = new PhpRenderer(__DIR__ . '/../View', $attributes);
         $render->setLayout('gabarit.php');
 
         return $render->render($response, 'register.php');
     }
 
-    public function registerPost(
+    public function register(
         ServerRequestInterface $request,
         ResponseInterface $response,
         array $args
@@ -35,8 +42,13 @@ class MembersController
         }
 
         $members = new Members();
-        $response = $members->register($values);
+        $r = $members->registerNewMember($values);
 
-        return $response->withHeader('Location', '/')->withStatus(200);
+        if (is_string($r)) {
+            $this->index($request, $response, $args, $r);
+            return $response;
+        }
+
+        return $response->withHeader('Location', '/')->withStatus(302);
     }
 }
