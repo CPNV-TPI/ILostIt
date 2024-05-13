@@ -36,9 +36,9 @@ $app->group('/objects', function (RouteCollectorProxy $group) {
 # Auth route
 $app->group('/auth', function (RouteCollectorProxy $group) {
     $group->group('/register', function (RouteCollectorProxy $group) {
-        $group->get('', [\ILostIt\Controller\MembersController::class, 'register']);
+        $group->get('', [\ILostIt\Controller\MembersController::class, 'index']);
 
-        $group->post('', [\ILostIt\Controller\MembersController::class, 'registerPost']);
+        $group->post('', [\ILostIt\Controller\MembersController::class, 'register']);
 
         $group->patch('/validate', [\ILostIt\Controller\MembersController::class, 'validateRegister']);
     });
