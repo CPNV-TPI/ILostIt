@@ -17,7 +17,7 @@ $links = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>I Lost It - <?=$title?></title>
-    <link rel="stylesheet" href="../src/css/main.css">
+    <link rel="stylesheet" href="/src/css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -179,6 +179,6 @@ $links = [
         </div>
     </dialog>
 
-    <script src="../src/js/app.js"></script>
+    <script src="/src/js/app.js"></script>
 </body>
 </html>
