@@ -6,17 +6,22 @@ use PHPUnit\Framework\TestCase;
 
 class TestMembers extends TestCase
 {
+    protected array $values;
+
+    public function setUp(): void
+    {
+        $this->values = [
+            "firstName" => "John",
+            "lastName" => "Doe",
+            "email" => "john@doe.com",
+            "password" => "password",
+        ];
+    }
+
     public function testCanGetMembers()
     {
-        $values = [
-            "lastname" => "Doe",
-            "firstname" => "John",
-            "email" => "john@doe.com",
-            "password" => "password"
-        ];
-
         $members = new Members();
-        $insertMember = $members->registerNewMember($values);
+        $insertMember = $members->registerNewMember($this->values);
         $results = $members->getMembers();
 
         $this->assertIsArray($results);
@@ -25,14 +30,14 @@ class TestMembers extends TestCase
 
     public function testCanRegisterNewMember()
     {
-        $members = new Members();
-
         $values = [
-            "lastname" => "Puolos",
-            "firstname" => "Katrin",
-            "email" => "katrin@puolos.com",
-            "password" => "password"
+            "firstName" => "John",
+            "lastName" => "Blower",
+            "email" => "john@blower.com",
+            "password" => "password",
         ];
+
+        $members = new Members();
 
         $expectedMembers = count($members->getMembers()) + 1;
         $insertMember = $members->registerNewMember($values);
@@ -41,28 +46,85 @@ class TestMembers extends TestCase
         $this->assertCount($expectedMembers, $members->getMembers());
     }
 
-    public function testCanVerifyUser()
+    public function testCanMemberLoginWithNonExistingUser()
     {
-        $values = [
-            "lastName" => "Doe",
-            "firstName" => "John",
-            "email" => "john@doe.com",
-            "password" => "password"
-        ];
-
         $members = new Members();
-        $insertMember = $members->registerNewMember($values);
+
+        $email = "joe@blow.com";
+        $password = "password";
+
+        $loginResult = $members->checkLogin($email, $password);
+
+        $this->assertIsString($loginResult);
+    }
+
+    public function testCanMemberLoginWithValidCredentialsAndAccountNotVerified()
+    {
+        $members = new Members();
+
+        $insertMember = $members->registerNewMember($this->values);
+        $loginResult = $members->checkLogin($this->values['email'], $this->values['password']);
+
+        $this->assertIsString($loginResult);
+    }
+
+    public function testCanMemberLoginWithValidCredentialsAndAccountVerified()
+    {
+        $members = new Members();
+
+        $insertMember = $members->registerNewMember($this->values);
         $membersList = $members->getMembers();
 
         foreach ($membersList as $member) {
-            if ($member["email"] == $values["email"]) {
+            if ($member["email"] == $this->values["email"]) {
+                $verified = $members->verifyUser($member["id"]);
+            }
+        }
+
+        $loginResult = $members->checkLogin($this->values['email'], $this->values['password']);
+
+        $this->assertIsArray($loginResult);
+    }
+
+    public function testCanMemberLoginWithInvalidEmail()
+    {
+        $members = new Members();
+
+        $badEmail = "john@blow.com";
+
+        $insertMember = $members->registerNewMember($this->values);
+        $loginResult = $members->checkLogin($badEmail, $this->values['password']);
+
+        $this->assertIsString($loginResult);
+    }
+
+    public function testCanMemberLoginWithInvalidPassword()
+    {
+        $members = new Members();
+
+        $password = "ThisIsNotTheRealPassword";
+
+        $insertMember = $members->registerNewMember($this->values);
+        $loginResult = $members->checkLogin($this->values['email'], $password);
+
+        $this->assertIsString($loginResult);
+    }
+
+    public function testCanVerifyUser()
+    {
+        $members = new Members();
+        $insertMember = $members->registerNewMember($this->values);
+        $membersList = $members->getMembers();
+
+        foreach ($membersList as $member) {
+            if ($member["email"] == $this->values["email"]) {
                 $verified = $members->verifyUser($member["id"]);
             }
         }
 
         $membersList = $members->getMembers();
         foreach ($membersList as $member) {
-            if ($member["email"] == $values["email"]) {
+            if ($member["email"] == $this->values["email"]) {
                 $this->assertEquals(1, $member['isVerified']);
             }
         }
