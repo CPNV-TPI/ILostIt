@@ -2,6 +2,8 @@
 
 namespace ILostIt;
 
+session_start();
+
 use Slim\Middleware\MethodOverrideMiddleware;
 use Slim\Factory\AppFactory;
 use Slim\Routing\RouteCollectorProxy;
@@ -36,7 +38,7 @@ $app->group('/objects', function (RouteCollectorProxy $group) {
 # Auth route
 $app->group('/auth', function (RouteCollectorProxy $group) {
     $group->group('/register', function (RouteCollectorProxy $group) {
-        $group->get('', [\ILostIt\Controller\MembersController::class, 'index']);
+        $group->get('', [\ILostIt\Controller\MembersController::class, 'registerPage']);
 
         $group->post('', [\ILostIt\Controller\MembersController::class, 'register']);
 
@@ -45,8 +47,12 @@ $app->group('/auth', function (RouteCollectorProxy $group) {
         $group->patch('/verify/{id}', [\ILostIt\Controller\MembersController::class, 'verifyMember']);
     });
 
-    $group->redirect('', '/auth/login');
+    $group->group('/login', function (RouteCollectorProxy $group) {
+        $group->get('', [\ILostIt\Controller\MembersController::class, 'loginPage']);
+        $group->post('', [\ILostIt\Controller\MembersController::class, 'login']);
+    });
 });
+$app->redirect('/auth','/auth/login');
 
 # Mod route
 $app->group('/mod', function (RouteCollectorProxy $group) {

@@ -29,9 +29,9 @@ namespace ILostIt\View;
                 </div>
             </div>
 
-            <?php if (!isset($_SESSION)) : ?>
+            <?php if (isset($_SESSION['email'])) : ?>
                 <div class="see-more">
-                    <a href="/posts" class="bg-primary px-20 py-5 text-white">Voir plus</a>
+                    <a href="/objects" class="bg-primary px-20 py-5 text-white">Voir plus</a>
                 </div>
             <?php endif; ?>
         </div>

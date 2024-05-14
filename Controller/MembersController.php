@@ -9,22 +9,13 @@ use Slim\Views\PhpRenderer;
 
 class MembersController
 {
-    public function index(
+    public function registerPage(
         ServerRequestInterface $request,
         ResponseInterface $response,
         array $args,
         string $error = ""
     ): ResponseInterface {
-        $attributes = ['title' => 'S\'enregistrer'];
-
-        if ($error != "") {
-            $attributes = array_merge($attributes, ['error' => $error]);
-        }
-
-        $render = new PhpRenderer(__DIR__ . '/../View', $attributes);
-        $render->setLayout('gabarit.php');
-
-        return $render->render($response, 'register.php');
+        return $this->render($response, 'S\'enregistrer', 'register', [], $error);
     }
 
     public function register(
@@ -45,8 +36,42 @@ class MembersController
         $r = $members->registerNewMember($values);
 
         if (is_string($r)) {
-            $this->index($request, $response, $args, $r);
+            $this->registerPage($request, $response, $args, $r);
             return $response;
+        }
+
+        return $response->withHeader('Location', '/')->withStatus(302);
+    }
+
+    public function loginPage(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args,
+        string $error = ""
+    ): ResponseInterface {
+        return $this->render($response, 'Se connecter', 'login', [], $error);
+    }
+
+    public function login(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
+        $body = $request->getParsedBody();
+
+        $email = $body['email'];
+        $password = $body['password'];
+
+        $members = new Members();
+        $result = $members->checkLogin($email, $password);
+
+        if (is_string($result)) {
+            $this->loginPage($request, $response, $args, $result);
+            return $response;
+        }
+
+        foreach ($result as $key => $content) {
+            $_SESSION[$key] = $content;
         }
 
         return $response->withHeader('Location', '/')->withStatus(302);
@@ -57,13 +82,9 @@ class MembersController
         ResponseInterface $response,
         array $args
     ): ResponseInterface {
-        $attributes = ['title' => 'Vérifiez votre compte'];
-        $userIdToVerify = $args['id'];
+        $attributes = [ "id" =>  $args['id'] ];
 
-        $render = new PhpRenderer(__DIR__ . '/../View', $attributes);
-        $render->setLayout('gabarit.php');
-
-        return $render->render($response, 'verify.php', ['email' => $userIdToVerify]);
+        return $this->render($response, 'Vérifiez votre compte', 'verify', $attributes);
     }
 
     public function verifyMember(
@@ -81,5 +102,30 @@ class MembersController
         }
 
         return $response->withStatus(200);
+    }
+
+    private function render(
+        ResponseInterface $response,
+        string $title,
+        string $page,
+        array $attributes = [],
+        string $error = ""
+    ): ResponseInterface {
+        $finalAttributes = ['title' => $title];
+
+        if (!empty($attributes)) {
+            foreach ($attributes as $key => $value) {
+                $finalAttributes[$key] = $value;
+            }
+        }
+
+        if ($error != "") {
+            $finalAttributes['error'] = $error;
+        }
+
+        $render = new PhpRenderer(__DIR__ . '/../View', $finalAttributes);
+        $render->setLayout('gabarit.php');
+
+        return $render->render($response, $page . '.php');
     }
 }
