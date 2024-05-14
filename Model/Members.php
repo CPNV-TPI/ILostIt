@@ -60,6 +60,44 @@ class Members
         return $mail->send($memberInformations["email"], $message, $subject);
     }
 
+    public function checkLogin(string $email, string $password): array | string
+    {
+        $errorBadCredentials = "Email ou mot de passe incorrect !";
+        $errorNotVerified = "Votre compte n'est pas vérifié. Veuillez vérifier votre email avant de vous connecter !";
+
+        $filter = [ ["email", "=", $email] ];
+        $member = $this->getMembers($filter);
+
+        // Check if a user exists with this email
+        if (empty($member)) {
+            return $errorBadCredentials;
+        }
+
+        // Checks if both passwords are equal
+        $arePasswordEquals = hash_equals($member[0]["password"], hash('sha256', $password));
+
+        if (!$arePasswordEquals) {
+            return $errorBadCredentials;
+        }
+
+        // Checks if user is verified or not
+        $isUserVerified = $member[0]["isVerified"];
+
+        if ($isUserVerified != 1) {
+            return $errorNotVerified;
+        }
+
+        // Prepare SESSION informations
+        $memberInformations = [
+            "firstname" => $member[0]["firstname"],
+            "lastname" => $member[0]["lastname"],
+            "email" => $member[0]["email"],
+            "isMod" => $member[0]["isMod"]
+        ];
+
+        return $memberInformations;
+    }
+
     /**
      * This method is designed to verify a newly created user
      * @param string $id
