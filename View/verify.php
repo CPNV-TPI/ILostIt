@@ -6,7 +6,9 @@ namespace ILostIt\View;
 
 <div class="verify w-3/4 mx-auto text-center mt-20 text-2xl">
     <p id="status"></p>
-    <div id="timer" class="hidden mt-10">Vous allez être redirigé vers la page de connexion dans : <span id="seconds">5</span></div>
+    <div id="timer" class="hidden mt-10">
+        Vous allez être redirigé vers la page de connexion dans : <span id="seconds">5</span>
+    </div>
 </div>
 
 <script>
