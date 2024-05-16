@@ -68,35 +68,10 @@ class Emails
         $mail->SMTPAuth = true;
         $mail->Username = $this->username;
         $mail->Password = $this->password;
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $mail->Port = $this->port;
         $mail->setFrom($this->username, "I Lost It");
         $mail->isHTML(true);
         $mail->CharSet = "UTF-8";
-
-        /* Google's SMTP */
-
-        /* Set Auth type */
-        $mail->AuthType = 'XOAUTH2';
-
-        /* Create new provider */
-        $provider = new Google([
-            'clientId' => $this->clientId,
-            'clientSecret' => $this->clientSecret,
-        ]);
-
-        /* Pass the provider */
-        $mail->setOAuth(
-            new OAuth(
-                [
-                    'provider' => $provider,
-                    'clientId' => $this->clientId,
-                    'clientSecret' => $this->clientSecret,
-                    'refreshToken' => $this->refreshToken,
-                    'userName' => $this->username,
-                ]
-            )
-        );
 
         return $mail;
     }
