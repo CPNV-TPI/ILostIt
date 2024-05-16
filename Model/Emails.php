@@ -13,9 +13,6 @@ class Emails
     private string $port = "";
     private string $username = "";
     private string $password = "";
-    private string $clientId = "";
-    private string $clientSecret = "";
-    private string $refreshToken = "";
 
     public function __construct()
     {
@@ -24,9 +21,6 @@ class Emails
         $this->port = $env['MAIL_SMTP_PORT'];
         $this->username = $env['MAIL_USER'];
         $this->password = $env['MAIL_PASSWORD'];
-        $this->clientId = $env['MAIL_GOOGLE_CLIENT_ID'];
-        $this->clientSecret = $env['MAIL_GOOGLE_CLIENT_SECRET'];
-        $this->refreshToken = $env['MAIL_GOOGLE_REFRESH_TOKEN'];
     }
 
     /**
