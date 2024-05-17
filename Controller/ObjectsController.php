@@ -2,6 +2,7 @@
 
 namespace ILostIt\Controller;
 
+use ILostIt\Controller\HomeController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ILostIt\Model\Objects;
@@ -17,24 +18,39 @@ class ObjectsController
      * @param  array $args
      * @return ResponseInterface
      */
-    public function index(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function objectsPage(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         // Get the link params
         $params = $request->getQueryParams();
 
         $filters = array(["status", "=", 1]);
 
         if (isset($params['type'])) {
-            array_push($filters, array("type", "=", $params['type']));
+            $filters[] = array("type", "=", $params['type']);
         }
 
         $objectsModel = new Objects();
-        $objects = $objectsModel->getObjects($filters);
+        $page = isset($params['page']) && is_numeric($params['page']) ? $params['page'] : 1;
+        $nbObjects = 12;
+        $objects = $objectsModel->getObjects($filters, $page, $nbObjects);
 
-        $render = new PhpRenderer(__DIR__ . '/../View', ['title' => 'Accueil']);
-        $render->setLayout('gabarit.php');
+        $canBeANextPage = count($objects) == $nbObjects ?
+            count($objectsModel->getObjects($filters, $page + 1, $nbObjects)) :
+            false;
 
-        return $render->render($response, 'objects.php', ["objects" => $objects]);
+        $nextPage = $canBeANextPage == 0 ? null : $page + 1;
+        $previousPage = $page > 1 ? $page - 1 : null;
+        $attributes = [
+            "objects" => $objects,
+            "nextPage" => $nextPage,
+            "previousPage" => $previousPage,
+            "byType" => $params['type'] ?? null,
+        ];
+
+        return $this->render($response, "Les publications", "objects", $attributes);
     }
 
     public function objectPage(
@@ -50,12 +66,7 @@ class ObjectsController
         $objectsModel = new Objects();
         $object = $objectsModel->getObjects($filters)[0];
 
-        $object['image'] = json_decode($object['image']);
-
-        $render = new PhpRenderer(__DIR__ . '/../View', ['title' => $object['title']]);
-        $render->setLayout('gabarit.php');
-
-        return $render->render($response, 'object.php', ["object" => $object]);
+        return $this->render($response, $object["title"], "object", ["object" => $object]);
     }
 
     /**
@@ -66,25 +77,44 @@ class ObjectsController
      * @param  array $args
      * @return ResponseInterface
      */
-    public function object(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function objectPost(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $body = $request->getParsedBody();
-        $values = array();
+        $values = [];
+        $home = new HomeController();
+        $error = "Une erreur est survenue lors de l'enregistrement. Merci de ressayer plus tard.";
 
         foreach ($body as $key => $content) {
-            if ($key == 'title' || $key == 'description' || $key == 'classroom') {
-                $values = array_merge($values, array($key => $content));
+            if ($content != "") {
+                $values[$key] = $content;
             }
+        }
+        $values['memberOwner_id'] = $_SESSION['id'];
+
+        $images = [];
+        foreach ($_FILES['image']['tmp_name'] as $key => $image) {
+            // Checks image size and type to prevent empty files and incorrect named files
+            if (filesize($image) <= 0 || !exif_imagetype($image)) {
+                return $home->index($request, $response, $args, $error);
+            }
+
+            $imageType = $_FILES['image']['type'][$key];
+            $imageType = str_replace('image/', '', $imageType);
+
+            $images[] = ["image" => $image, "type" => $imageType];
         }
 
         $objectsModel = new Objects();
-        $status = $objectsModel->publishObject($values);
+        $status = $objectsModel->publishObject($values, $images);
 
-        if ($status) {
-            return $response->withHeader('Location', '/objects')->withStatus(302);
+        if (!$status) {
+            return $response->withHeader("Location", "/?error=true")->withStatus(302);
         }
 
-        return $response->withHeader('Location', '/objects')->withStatus(500);
+        return $response->withHeader("Location", "/")->withStatus(302);
     }
 
     /**
@@ -95,7 +125,7 @@ class ObjectsController
      * @param  array $args
      * @return ResponseInterface
      */
-    public function patch(ServerRequestInterface $request, $response, array $args): ResponseInterface
+    public function objectPatch(ServerRequestInterface $request, $response, array $args): ResponseInterface
     {
         $body = $request->getParsedBody();
         $values = array();
@@ -125,8 +155,11 @@ class ObjectsController
      * @param  array $args
      * @return ResponseInterface
      */
-    public function delete(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function objectCancel(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $id = $args['id'];
 
         $objectsModel = new Objects();
@@ -139,5 +172,30 @@ class ObjectsController
         }
 
         return $response->withStatus(500);
+    }
+
+    private function render(
+        ResponseInterface $response,
+        string $title,
+        string $page,
+        array $attributes = [],
+        string $error = ""
+    ): ResponseInterface {
+        $finalAttributes = ['title' => $title];
+
+        if (!empty($attributes)) {
+            foreach ($attributes as $key => $value) {
+                $finalAttributes[$key] = $value;
+            }
+        }
+
+        if ($error != "") {
+            $finalAttributes['error'] = $error;
+        }
+
+        $render = new PhpRenderer(__DIR__ . '/../View', $finalAttributes);
+        $render->setLayout('gabarit.php');
+
+        return $render->render($response, $page . '.php');
     }
 }
