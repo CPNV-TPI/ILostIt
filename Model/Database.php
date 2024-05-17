@@ -34,8 +34,14 @@ class Database
      * ) /!\ FILTERS ARE EXCLUSIVELY ANDs !
      * @return array
      */
-    public function select(string $table, array $columns, array $filters = array()): array
-    {
+    public function select(
+        string $table,
+        array $columns,
+        array $filters = array(),
+        int $count = 0,
+        int $offset = 0,
+        array $orderBy = []
+    ): array {
         $sql = "SELECT ";
 
         // Defines the columns
@@ -61,6 +67,22 @@ class Database
 
                 $sql .= $filter[0] . " " . $filter[1] . " \"" . $filter[2] . "\"";
             }
+        }
+
+        if (count($orderBy) != 0) {
+            $sql .= " ORDER BY ";
+
+            foreach ($orderBy as $value) {
+                $sql .= $value[0] . " " . $value[1];
+            }
+        }
+
+        if ($offset != 0) {
+            $sql .= " OFFSET " . $offset . " ROWS";
+        }
+
+        if ($count != 0) {
+            $sql .= " FETCH FIRST " . $count . " ROWS ONLY";
         }
 
         $sql .= ";";
@@ -115,7 +137,7 @@ class Database
         try {
             $db->prepare($sql)->execute($values);
         } catch (Exception $e) {
-            return $e;
+            return false;
         }
 
         return true;
