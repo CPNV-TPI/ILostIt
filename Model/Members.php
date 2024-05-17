@@ -89,6 +89,7 @@ class Members
 
         // Prepare SESSION informations
         $memberInformations = [
+            "id" => $member[0]["id"],
             "firstname" => $member[0]["firstname"],
             "lastname" => $member[0]["lastname"],
             "email" => $member[0]["email"],
