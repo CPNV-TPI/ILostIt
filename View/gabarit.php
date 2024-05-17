@@ -89,7 +89,7 @@ $links = [
                 >
                     X
                 </button>
-                <form action="/objects" method="POST" class="space-y-5">
+                <form action="/objects" method="POST" class="space-y-5" enctype="multipart/form-data">
                     <div class="title">
                         <label
                                 for="title"
@@ -113,6 +113,34 @@ $links = [
                                 maxlength="500"
                                 required
                         ></textarea>
+                    </div>
+                    <div class="type">
+                        <label
+                            for="type"
+                            class="mb-2 mr-2 after:content-['*'] after:text-red-600 after:text-sm"1
+                        >
+                            Type
+                        </label>
+                        <select name="type" id="type" class="border-2">
+                            <option value="Perdu">Perdu</option>
+                            <option value="Retrouvé">Retrouvé</option>
+                        </select>
+                    </div>
+                    <div class="image">
+                        <label
+                            for="image"
+                            class="mb-2 mr-2 after:content-['*'] after:text-red-600 after:text-sm"
+                        >
+                            Image(s)
+                        </label>
+                        <input
+                            type="file"
+                            id="image"
+                            name="image[]"
+                            accept="image/png,image/jpeg,image/jpg"
+                            multiple
+                            required
+                        >
                     </div>
                     <div class="attributes">
                         <p class="border-b border-black mb-2">Attributs</p>
