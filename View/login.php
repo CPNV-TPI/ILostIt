@@ -14,7 +14,7 @@ namespace ILostIt\View;
                 name="email"
                 id="email"
                 class="w-full border border-black p-2"
-                pattern="/([a-z]+)\.([a-z]+[-]*[0-9]*)+(@eduvaud\.ch)/g"
+                pattern="([a-z]+)\.([a-z]+[\-]*[0-9]*)+(@eduvaud\.ch)"
                 required
             >
         </div>
