@@ -5,8 +5,8 @@ namespace ILostIt\View;
 $links = [
     ["Se connecter", "/auth/login", 0],
     ["S'enregistrer", "/auth/register", 0],
-    ["Publications", "/objects", 1],
-    ["Les objets retrouvés", "/found-objects", 1],
+    ["Les objets", "/objects", 1],
+    ["Les objets résolus", "/solved-objects", 1],
 ]
 ?>
 
@@ -58,7 +58,7 @@ $links = [
                 <?php endforeach; ?>
 
                 <?php if (isset($_SESSION['isMod']) && $_SESSION['isMod']) : ?>
-                    <a href="/mod">Publications en attente></a>
+                    <a href="/mod">Objets en attente></a>
                 <?php endif; ?>
 
                 <?php if (isset($_SESSION['email'])) : ?>
