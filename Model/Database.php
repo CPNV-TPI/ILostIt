@@ -90,9 +90,7 @@ class Database
         $db = $this->dbConnection();
 
         $object = $db->query($sql);
-        $values = $object->fetchAll();
-
-        return $values;
+        return $object->fetchAll();
     }
 
     /**
@@ -100,9 +98,9 @@ class Database
      *
      * @param  string $table
      * @param  array $values Example -> array("column1" => "value1", "column2" => "value2")
-     * @return bool|Exception
+     * @return bool
      */
-    public function insert(string $table, array $values): bool | Exception
+    public function insert(string $table, array $values): bool
     {
         $sql = "INSERT INTO " . $table . " (";
 
@@ -152,9 +150,9 @@ class Database
      *  ["column1", "sql_operator", "%value1%"],
      *  ["column1", "sql_operator", "%value1%"]
      * ) /!\ FILTERS ARE EXCLUSIVELY ANDs !
-     * @return bool|Exception
+     * @return bool
      */
-    public function update(string $table, array $values, array $conditions): bool | Exception
+    public function update(string $table, array $values, array $conditions): bool
     {
         $sql = "UPDATE " . $table . " SET ";
 
@@ -202,9 +200,9 @@ class Database
      *  ["column1", "sql_operator", "%value1%"],
      *  ["column1", "sql_operator", "%value1%"]
      * ) /!\ FILTERS ARE EXCLUSIVELY ANDs !
-     * @return bool|Exception
+     * @return bool
      */
-    public function delete(string $table, array $conditions): bool | Exception
+    public function delete(string $table, array $conditions): bool
     {
         $sql = "UPDATE " . $table . " SET active = 0 WHERE ";
 
@@ -224,7 +222,7 @@ class Database
         try {
             $db->exec($sql);
         } catch (Exception $e) {
-            return $e;
+            return false;
         }
 
         return true;
