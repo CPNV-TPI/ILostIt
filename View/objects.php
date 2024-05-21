@@ -6,7 +6,7 @@ namespace ILostIt\View;
 
 <div class="posts py-5 md:py-10">
     <div class="content">
-        <div class="title text-4xl text-center">Les publications</div>
+        <div class="title text-4xl text-center">Les objets</div>
         <div class="filters text-center pt-5 md:pt-10">
             <a href="/objects?type=Perdu" class="px-2 py-px rounded-lg bg-orange-300">Perdu</a>
             <a href="/objects?type=Retrouvé" class="px-2 py-px rounded-lg bg-orange-300">Retrouvé</a>
@@ -16,7 +16,7 @@ namespace ILostIt\View;
             md:w-11/12 md:justify-evenly
         ">
             <?php if (count($objects) == 0) : ?>
-                <div class="no-posts text-center text-xl">Aucune publications trouvées...</div>
+                <div class="no-posts text-center text-xl">Aucun objet trouvé...</div>
             <?php else : ?>
                 <?php foreach ($objects as $object) :
                         $objectId = $object['id'];
