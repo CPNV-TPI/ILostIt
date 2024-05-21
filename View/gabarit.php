@@ -58,7 +58,7 @@ $links = [
                 <?php endforeach; ?>
 
                 <?php if (isset($_SESSION['isMod']) && $_SESSION['isMod']) : ?>
-                    <a href="/mod">Objets en attente></a>
+                    <a class="py-4 lg:py-0" href="/mod">Les objets en attente</a>
                 <?php endif; ?>
 
                 <?php if (isset($_SESSION['email'])) : ?>

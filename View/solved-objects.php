@@ -34,14 +34,14 @@ namespace ILostIt\View;
             <?php if (isset($previousPage)) : ?>
                 <a
                     class="bg-primary py-4 px-5 md:px-10 text-white"
-                    href="/objects?<?=isset($byType) ? "type=" . $byType . "&" : ""?>page=<?=$previousPage?>"
+                    href="/solved-objects?<?=isset($byType) ? "type=" . $byType . "&" : ""?>page=<?=$previousPage?>"
                 >Page précédente</a>
             <?php endif; ?>
 
             <?php if (isset($nextPage)) : ?>
                 <a
                     class="bg-primary py-4 px-5 md:px-10 text-white"
-                    href="/objects?<?=isset($byType) ? "type=" . $byType . "&" : ""?>page=<?=$nextPage?>"
+                    href="/solved-objects?<?=isset($byType) ? "type=" . $byType . "&" : ""?>page=<?=$nextPage?>"
                 >Page suivante</a>
             <?php endif; ?>
         </div>

@@ -4,6 +4,9 @@ namespace ILostIt;
 
 session_start();
 
+use ILostIt\src\Middleware\UserIsMod;
+use ILostIt\src\Middleware\UserLogged;
+use ILostIt\src\Middleware\UserNotLogged;
 use Slim\Middleware\MethodOverrideMiddleware;
 use Slim\Factory\AppFactory;
 use Slim\Routing\RouteCollectorProxy;
@@ -33,9 +36,9 @@ $app->group('/objects', function (RouteCollectorProxy $group) {
     $group->patch('/{id}', [\ILostIt\Controller\ObjectsController::class, 'objectPatch']);
 
     $group->delete('/{id}', [\ILostIt\Controller\ObjectsController::class, 'objectCancel']);
-});
+})->add(new UserNotLogged());
 
-$app->get('/solved-objects', [\ILostIt\Controller\ObjectsController::class, 'solvedObjects']);
+$app->get('/solved-objects', [\ILostIt\Controller\ObjectsController::class, 'solvedObjects'])->add(new UserNotLogged());
 
 # Auth route
 $app->group('/auth', function (RouteCollectorProxy $group) {
@@ -53,13 +56,13 @@ $app->group('/auth', function (RouteCollectorProxy $group) {
         $group->get('', [\ILostIt\Controller\MembersController::class, 'loginPage']);
         $group->post('', [\ILostIt\Controller\MembersController::class, 'login']);
     });
-});
-$app->redirect('/auth','/auth/login');
+})->add(new UserLogged());
+$app->redirect('/auth', '/auth/login');
 
 # Mod route
 $app->group('/mod', function (RouteCollectorProxy $group) {
     $group->get('', [\ILostIt\Controller\ModController::class, 'get']);
-});
+})->add(new UserNotLogged())->add(new UserIsMod());
 
 $app->addBodyParsingMiddleware();
 $errorMiddleware = $app->addErrorMiddleware(true, true, true);
