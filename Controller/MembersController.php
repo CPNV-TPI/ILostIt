@@ -27,9 +27,17 @@ class MembersController
         $values = array();
 
         foreach ($body as $key => $content) {
-            if ($key == 'lastname' || $key == 'firstname' || $key == 'email' || $key == 'password') {
-                $values = array_merge($values, array($key => $content));
+            if (
+                ($key == "email" && $content == "")
+                || ($key == "password" && $content == "")
+            ) {
+                $error = "Une erreur est survenue !";
+                $this->registerPage($request, $response, $args, $error);
+
+                return $response;
             }
+
+            $values[$key] = $content;
         }
 
         $members = new Members();
@@ -59,8 +67,19 @@ class MembersController
     ): ResponseInterface {
         $body = $request->getParsedBody();
 
-        $email = $body['email'];
-        $password = $body['password'];
+        if (
+            isset($body['username'])
+            && isset($body['password'])
+            && $body['username'] != ""
+            && $body['password'] != ""
+        ) {
+            $email = $body['email'];
+            $password = $body['password'];
+        } else {
+            $error = "Une erreur est suvernue !";
+            $this->loginPage($request, $response, $args, $error);
+            return $response;
+        }
 
         $members = new Members();
         $result = $members->checkLogin($email, $password);
