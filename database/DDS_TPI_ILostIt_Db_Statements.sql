@@ -1,22 +1,16 @@
--- Author      : Diogo da Silva Fernandes
--- Project     : TPI - I Lost It
--- Version     : 1.0
--- Date        : 17.05.24
--- Description : File grouping test statements.
+###########################
+#         MEMBERS         #
+###########################
 
------------------------------
---         MEMBERS         --
------------------------------
-
--- Get all members
+# Get all members
 SELECT id, lastName, firstName, email, password, isVerified, isActive, isMod FROM members;
 
------------------------------
---         OBJECTS         --
------------------------------
+###########################
+#         OBJECTS         #
+###########################
 
--- Get all objects (Active and Inactive) (All types)
-SELECT
+# Get all objects (Active and Inactive) (All types)
+SELECT 
     objects.id,
     objects.title,
     objects.description,
@@ -29,13 +23,13 @@ SELECT
     objects.memberOwner_id,
     objects.memberFinder_id,
     GROUP_CONCAT(images.name) AS image_name
-FROM
+FROM 
     objects
-LEFT JOIN
+LEFT JOIN 
     images ON objects.id = images.object_id;
-
--- Get objects only type = Perdu and status = awaiting validation (0)
-SELECT
+    
+# Get objects only type = Perdu and status = awaiting validation (0)
+SELECT 
     objects.id,
     objects.title,
     objects.description,
@@ -48,15 +42,15 @@ SELECT
     objects.memberOwner_id,
     objects.memberFinder_id,
     GROUP_CONCAT(images.name) AS image_name
-FROM
+FROM 
     objects
-LEFT JOIN
+LEFT JOIN 
     images ON objects.id = images.object_id
 WHERE
 	objects.type = "Perdu" AND objects.status = 0;
-
--- Get all objects created by a user
-SELECT
+	
+# Get all objects created by a user
+SELECT 
     objects.id,
     objects.title,
     objects.description,
@@ -69,15 +63,15 @@ SELECT
     objects.memberOwner_id,
     objects.memberFinder_id,
     GROUP_CONCAT(images.name) AS image_name
-FROM
+FROM 
     objects
-LEFT JOIN
+LEFT JOIN 
     images ON objects.id = images.object_id
 WHERE
-	objects.memberOwner_id = 1;
-
--- Get all objects with user owner and user finder
-SELECT
+	objects.memberOwner_id = 12;
+	
+# Get all objects with user owner and user finder
+SELECT 
     objects.id,
     objects.title,
     objects.description,
@@ -89,18 +83,18 @@ SELECT
     objects.status,
     objects.memberOwner_id,
     objects.memberFinder_id,
-
+    
     GROUP_CONCAT(images.name) AS image_name,
-
+    
     mo.firstname AS memberOwner_firstname,
-    mo.lastname AS memberOwner_firstname,
-    mo.email AS memberOwner_firstname,
+    mo.lastname AS memberOwner_lastname,
+    mo.email AS memberOwner_email,
     mf.firstname AS memberFinder_firstname,
-    mf.lastname AS memberFinder_firstname,
-    mf.email AS memberFinder_firstname
-FROM
+    mf.lastname AS memberFinder_lastname,
+    mf.email AS memberFinder_email
+FROM 
     objects
-LEFT JOIN
+LEFT JOIN 
     images ON objects.id = images.object_id
 LEFT JOIN
 	members mo ON mo.id = objects.memberOwner_id
