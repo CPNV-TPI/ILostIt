@@ -50,7 +50,7 @@ class ObjectsController
             "byType" => $params['type'] ?? null,
         ];
 
-        return $this->render($response, "Les publications", "objects", $attributes);
+        return $this->render($response, "Les objets", "objects", $attributes);
     }
 
     public function objectPage(
@@ -69,6 +69,41 @@ class ObjectsController
         return $this->render($response, $object["title"], "object", ["object" => $object]);
     }
 
+    public function solvedObjects(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
+        // Get the link params
+        $params = $request->getQueryParams();
+
+        $filters = array(["status", "=", 3]);
+
+        if (isset($params['type'])) {
+            $filters[] = array("type", "=", $params['type']);
+        }
+
+        $objectsModel = new Objects();
+        $page = isset($params['page']) && is_numeric($params['page']) ? $params['page'] : 1;
+        $nbObjects = 12;
+        $objects = $objectsModel->getObjects($filters, $page, $nbObjects);
+
+        $canBeANextPage = count($objects) == $nbObjects ?
+            count($objectsModel->getObjects($filters, $page + 1, $nbObjects)) :
+            false;
+
+        $nextPage = $canBeANextPage == 0 ? null : $page + 1;
+        $previousPage = $page > 1 ? $page - 1 : null;
+        $attributes = [
+            "objects" => $objects,
+            "nextPage" => $nextPage,
+            "previousPage" => $previousPage,
+            "byType" => $params['type'] ?? null,
+        ];
+
+        return $this->render($response, "Les objets résolus", "solved-objects", $attributes);
+    }
+
     /**
      * Handler for route /objects via POST method
      *
@@ -85,7 +120,6 @@ class ObjectsController
         $body = $request->getParsedBody();
         $values = [];
         $home = new HomeController();
-        $error = "Une erreur est survenue lors de l'enregistrement. Merci de ressayer plus tard.";
 
         foreach ($body as $key => $content) {
             if ($content != "") {
@@ -111,10 +145,10 @@ class ObjectsController
         $status = $objectsModel->publishObject($values, $images);
 
         if (!$status) {
-            return $response->withHeader("Location", "/?error=true")->withStatus(302);
+            return $response->withHeader("Location", "/?created=false")->withStatus(302);
         }
 
-        return $response->withHeader("Location", "/")->withStatus(302);
+        return $response->withHeader("Location", "/?created=true")->withStatus(302);
     }
 
     /**
