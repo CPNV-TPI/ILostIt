@@ -35,6 +35,8 @@ $app->group('/objects', function (RouteCollectorProxy $group) {
     $group->delete('/{id}', [\ILostIt\Controller\ObjectsController::class, 'objectCancel']);
 });
 
+$app->get('/solved-objects', [\ILostIt\Controller\ObjectsController::class, 'solvedObjects']);
+
 # Auth route
 $app->group('/auth', function (RouteCollectorProxy $group) {
     $group->group('/register', function (RouteCollectorProxy $group) {
