@@ -9,7 +9,7 @@ namespace ILostIt\View;
         <div class="last-posts space-y-5 md:space-y-10 text-center">
             <div class="title text-4xl pt-5 md:pt-10">Bienvenue sur la plateforme !</div>
             <div class="sep w-1/3 h-px bg-black mx-auto"></div>
-            <div class="desc">Les dernières publications :</div>
+            <div class="desc">Les dernièrs objets :</div>
 
             <div class="slider">
                 <?php if (count($objects) != 0) : ?>
@@ -50,7 +50,7 @@ namespace ILostIt\View;
                         </div>
                     </div>
                 <?php else : ?>
-                    <div class="text-center text-2xl">Aucune publication trouvée...</div>
+                    <div class="text-center text-2xl">Aucun objet trouvé...</div>
                 <?php endif; ?>
             </div>
 
