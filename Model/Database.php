@@ -34,8 +34,14 @@ class Database
      * ) /!\ FILTERS ARE EXCLUSIVELY ANDs !
      * @return array
      */
-    public function select(string $table, array $columns, array $filters = array()): array
-    {
+    public function select(
+        string $table,
+        array $columns,
+        array $filters = array(),
+        int $count = 0,
+        int $offset = 0,
+        array $orderBy = []
+    ): array {
         $sql = "SELECT ";
 
         // Defines the columns
@@ -63,14 +69,28 @@ class Database
             }
         }
 
+        if (count($orderBy) != 0) {
+            $sql .= " ORDER BY ";
+
+            foreach ($orderBy as $value) {
+                $sql .= $value[0] . " " . $value[1];
+            }
+        }
+
+        if ($offset != 0) {
+            $sql .= " OFFSET " . $offset . " ROWS";
+        }
+
+        if ($count != 0) {
+            $sql .= " FETCH FIRST " . $count . " ROWS ONLY";
+        }
+
         $sql .= ";";
 
         $db = $this->dbConnection();
 
         $object = $db->query($sql);
-        $values = $object->fetchAll();
-
-        return $values;
+        return $object->fetchAll();
     }
 
     /**
@@ -78,9 +98,9 @@ class Database
      *
      * @param  string $table
      * @param  array $values Example -> array("column1" => "value1", "column2" => "value2")
-     * @return bool|Exception
+     * @return bool
      */
-    public function insert(string $table, array $values): bool | Exception
+    public function insert(string $table, array $values): bool
     {
         $sql = "INSERT INTO " . $table . " (";
 
@@ -115,7 +135,7 @@ class Database
         try {
             $db->prepare($sql)->execute($values);
         } catch (Exception $e) {
-            return $e;
+            return false;
         }
 
         return true;
@@ -130,9 +150,9 @@ class Database
      *  ["column1", "sql_operator", "%value1%"],
      *  ["column1", "sql_operator", "%value1%"]
      * ) /!\ FILTERS ARE EXCLUSIVELY ANDs !
-     * @return bool|Exception
+     * @return bool
      */
-    public function update(string $table, array $values, array $conditions): bool | Exception
+    public function update(string $table, array $values, array $conditions): bool
     {
         $sql = "UPDATE " . $table . " SET ";
 
@@ -180,9 +200,9 @@ class Database
      *  ["column1", "sql_operator", "%value1%"],
      *  ["column1", "sql_operator", "%value1%"]
      * ) /!\ FILTERS ARE EXCLUSIVELY ANDs !
-     * @return bool|Exception
+     * @return bool
      */
-    public function delete(string $table, array $conditions): bool | Exception
+    public function delete(string $table, array $conditions): bool
     {
         $sql = "UPDATE " . $table . " SET active = 0 WHERE ";
 
@@ -202,7 +222,7 @@ class Database
         try {
             $db->exec($sql);
         } catch (Exception $e) {
-            return $e;
+            return false;
         }
 
         return true;

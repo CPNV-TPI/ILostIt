@@ -11,23 +11,31 @@ namespace ILostIt\View;
             <?=$object['title']?>
         </div>
 
-        <?php if (count($object['image']) == 0) : ?>
-            <img src="../src/img/base_image.png" alt="" class="w-[200px] md:w-[300px] mx-auto shadow-md">
+        <?php if (!isset($object['images']) || count($object['images']) == 0) : ?>
+            <img src="../src/img/base_image.png" alt="" class="h-[150px] md:h-[300px] mx-auto shadow-md">
         <?php endif; ?>
 
-        <?php if (count($object['image']) == 1) : ?>
-            <img src=<?=$object['image'][0]?> alt="" class="w-[200px] md:w-[300px] mx-auto shadow-md">
+        <?php if (isset($object['images']) && count($object['images']) == 1) : ?>
+            <img
+                src="../src/img/objects/<?=$object['id']?>/<?=$object['images'][0]?>"
+                alt=""
+                class="h-[150px] md:h-[300px] mx-auto shadow-md"
+            >
         <?php endif; ?>
 
-        <?php if (count($object['image']) > 1) : ?>
+        <?php if (isset($object['images']) && count($object['images']) > 1) : ?>
             <div class="slider">
-                <div class="splide slider-last-posts md:w-8/12 lg:w-6/12 mx-auto" id="sliderPost">
+                <div class="splide slider-last-posts lg:w-8/12 mx-auto" id="sliderPost">
                     <div class="splide__track">
                         <ul class="splide__list">
-                            <?php foreach ($object['image'] as $image) : ?>
+                            <?php foreach ($object['images'] as $image) : ?>
                                 <li class="splide__slide">
                                     <div class="splide__slide__container">
-                                        <img src=<?=$image?> alt="" class="w-[200px] md:w-[300px] mx-auto shadow-md">
+                                        <img
+                                            src="../src/img/objects/<?=$object['id']?>/<?=$image?>"
+                                            alt=""
+                                            class="h-[150px] md:h-[300px] mx-auto shadow-md"
+                                        >
                                     </div>
                                 </li>
                             <?php endforeach; ?>

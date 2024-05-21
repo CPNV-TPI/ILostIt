@@ -24,16 +24,18 @@ $app->redirect('/home', '/');
 
 # Objects route
 $app->group('/objects', function (RouteCollectorProxy $group) {
-    $group->get('', [\ILostIt\Controller\ObjectsController::class, 'index']);
+    $group->get('', [\ILostIt\Controller\ObjectsController::class, 'objectsPage']);
 
     $group->get('/{id}', [\ILostIt\Controller\ObjectsController::class, 'objectPage']);
 
-    $group->post('', [\ILostIt\Controller\ObjectsController::class, 'post']);
+    $group->post('', [\ILostIt\Controller\ObjectsController::class, 'objectPost']);
 
-    $group->patch('/{id}', [\ILostIt\Controller\ObjectsController::class, 'patch']);
+    $group->patch('/{id}', [\ILostIt\Controller\ObjectsController::class, 'objectPatch']);
 
-    $group->delete('/{id}', [\ILostIt\Controller\ObjectsController::class, 'delete']);
+    $group->delete('/{id}', [\ILostIt\Controller\ObjectsController::class, 'objectCancel']);
 });
+
+$app->get('/solved-objects', [\ILostIt\Controller\ObjectsController::class, 'solvedObjects']);
 
 # Auth route
 $app->group('/auth', function (RouteCollectorProxy $group) {

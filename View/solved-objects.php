@@ -6,10 +6,10 @@ namespace ILostIt\View;
 
 <div class="posts py-5 md:py-10">
     <div class="content">
-        <div class="title text-4xl text-center">Les objets</div>
+        <div class="title text-4xl text-center">Les objets résolus</div>
         <div class="filters text-center pt-5 md:pt-10">
-            <a href="/objects?type=Perdu" class="px-2 py-px rounded-lg bg-orange-300">Perdu</a>
-            <a href="/objects?type=Retrouvé" class="px-2 py-px rounded-lg bg-orange-300">Retrouvé</a>
+            <a href="/solved-objects?type=Perdu" class="px-2 py-px rounded-lg bg-orange-300">Perdu</a>
+            <a href="/solved-objects?type=Retrouvé" class="px-2 py-px rounded-lg bg-orange-300">Retrouvé</a>
         </div>
         <div class="
             posts w-5/6 mx-auto flex flex-wrap justify-between gap-y-5 items-center mt-10
