@@ -2,21 +2,21 @@
 
 namespace ILostIt\Model;
 
-
-use Exception;
-
 class Objects
 {
     private string $objectsTable = "objects";
     private string $imagesTable = "images";
 
     /**
-     * This method is designed to get all posts from database.
+     * This method is designed to get all objects from database.
      *
      * @param  array $filters
-     * @return array | int
+     * @param int $page
+     * @param int $count
+     * @param array $orderBy
+     * @return array
      */
-    public function getObjects(array $filters = [], int $page = 1, int $count = 0, array $orderBy = []): array | int
+    public function getObjects(array $filters = [], int $page = 1, int $count = 0, array $orderBy = []): array
     {
         $columnsObject = array("id", "title", "description", "classroom", "brand", "color", "value");
         $columnsImages = array("name");
@@ -47,7 +47,7 @@ class Objects
     }
 
     /**
-     * This method is designed to insert a post in the database.
+     * This method is designed to insert an object in the database.
      *
      * @param array $values
      * @param array $images
@@ -85,6 +85,10 @@ class Objects
 
             $status = $db->insert($this->imagesTable, $imageInDatabase);
 
+            if (!$status) {
+                return $status;
+            }
+
             if (!is_dir($imageDirectory)) {
                 mkdir($imageDirectory, 0777, true);
             }
@@ -98,9 +102,18 @@ class Objects
         // ends db connection for security
         $db = false;
 
-        if (!$status) {
-            return $status;
-        }
+        $userEmail = $_SESSION["email"];
+        $subject = "Votre nouvelle publication !";
+        $message = "Bonjour!<br><br>";
+        $message .= "Tout d'abord, nous apprécions la confiance que vous fournissez en notre plateforme.<br><br>";
+        $message .= "Pour la maintenir en bonne forme et sécuritaire pour tous, ";
+        $message .= "chaque publication est soumise à vérification par notre équipe de modération.<br>";
+        $message .= "Votre nouvelle publication nous est bien parvenue et ça vérification est en cours. ";
+        $message .= "Une fois celle-ci vérifiée, vous recevrez par email une confirmation.<br><br>";
+        $message .= "Merci!<br><br>Meilleures salutations.<br>L'équipe I Lost It";
+
+        $email = new Emails();
+        $email->send($userEmail, $message, $subject);
 
         return true;
     }
@@ -128,7 +141,6 @@ class Objects
 
         return true;
     }
-
 
     /**
      * This method is designed to deactivate a post.
