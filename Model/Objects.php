@@ -109,10 +109,18 @@ class Objects
             );
         }
 
+        $membersModel = new Members();
+        $filtersMembers = [["id", "=", $publishedObject["memberOwner_id"]]];
+        $members = $membersModel->getMembers($filtersMembers);
+
+        if (count($members) == 0) {
+            return false;
+        }
+
         // ends db connection for security
         $db = false;
 
-        $userEmail = $_SESSION["email"];
+        $userEmail = $members[0]["email"];
         $subject = "Votre nouvelle publication !";
         $message = "Bonjour!<br><br>";
         $message .= "Tout d'abord, nous apprécions la confiance que vous fournissez en notre plateforme.<br><br>";
