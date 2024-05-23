@@ -2,7 +2,6 @@
 
 namespace ILostIt\Controller;
 
-use ILostIt\Controller\HomeController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ILostIt\Model\Objects;
@@ -53,6 +52,14 @@ class ObjectsController
         return $this->render($response, "Les objets", "objects", $attributes);
     }
 
+    /**
+     * Returns the page of an object
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @return ResponseInterface
+     */
     public function objectPage(
         ServerRequestInterface $request,
         ResponseInterface $response,
@@ -69,6 +76,14 @@ class ObjectsController
         return $this->render($response, $object["title"], "object", ["object" => $object]);
     }
 
+    /**
+     * Returns the page with the solved objects
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @return ResponseInterface
+     */
     public function solvedObjects(
         ServerRequestInterface $request,
         ResponseInterface $response,
@@ -132,7 +147,7 @@ class ObjectsController
         foreach ($_FILES['image']['tmp_name'] as $key => $image) {
             // Checks image size and type to prevent empty files and incorrect named files
             if (filesize($image) <= 0 || !exif_imagetype($image)) {
-                return $home->index($request, $response, $args, $error);
+                return $response->withHeader("Location", "/?created=false")->withStatus(302);
             }
 
             $imageType = $_FILES['image']['type'][$key];
@@ -151,6 +166,32 @@ class ObjectsController
         return $response->withHeader("Location", "/?created=true")->withStatus(302);
     }
 
+    public function objectValidation(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
+        $body = $request->getParsedBody();
+        $reason = $body['reason'] ?? null;
+        $objectId = $args['id'];
+        $objectsModel = new Objects();
+
+        $status = null;
+        if ($reason == null) {
+            $status = $objectsModel->validateObject($objectId);
+        }
+
+        if ($reason != "") {
+            $status = $objectsModel->validateObject($objectId, false, $reason);
+        }
+
+        if (!$status) {
+            return $response->withStatus(500);
+        }
+
+        return $response->withStatus(200);
+    }
+
     /**
      * Handler for route /objects via PATCH method
      *
@@ -159,8 +200,11 @@ class ObjectsController
      * @param  array $args
      * @return ResponseInterface
      */
-    public function objectPatch(ServerRequestInterface $request, $response, array $args): ResponseInterface
-    {
+    public function objectPatch(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $body = $request->getParsedBody();
         $values = array();
         $id = $args['id'];
@@ -208,6 +252,16 @@ class ObjectsController
         return $response->withStatus(500);
     }
 
+    /**
+     * This method is designed to render a view
+     *
+     * @param ResponseInterface $response
+     * @param string $title
+     * @param string $page
+     * @param array $attributes
+     * @param string $error
+     * @return ResponseInterface
+     */
     private function render(
         ResponseInterface $response,
         string $title,
