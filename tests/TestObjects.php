@@ -1,5 +1,7 @@
 <?php
 
+namespace ILostIt\tests;
+
 use PHPUnit\Framework\TestCase;
 use ILostIt\Model\Objects;
 

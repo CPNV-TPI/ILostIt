@@ -1,5 +1,6 @@
 <?php
 
+namespace ILostIt\tests;
 
 use ILostIt\Model\Emails;
 use PHPUnit\Framework\TestCase;
