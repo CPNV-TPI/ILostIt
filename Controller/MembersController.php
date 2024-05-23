@@ -68,9 +68,9 @@ class MembersController
         $body = $request->getParsedBody();
 
         if (
-            isset($body['username'])
+            isset($body['email'])
             && isset($body['password'])
-            && $body['username'] != ""
+            && $body['email'] != ""
             && $body['password'] != ""
         ) {
             $email = $body['email'];
