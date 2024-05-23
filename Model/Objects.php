@@ -18,7 +18,17 @@ class Objects
      */
     public function getObjects(array $filters = [], int $page = 1, int $count = 0, array $orderBy = []): array
     {
-        $columnsObject = array("id", "title", "description", "classroom", "brand", "color", "value");
+        $columnsObject = array(
+            "id",
+            "title",
+            "description",
+            "classroom",
+            "brand",
+            "color",
+            "value",
+            "status",
+            "memberOwner_id"
+        );
         $columnsImages = array("name");
 
         $db = new Database();
@@ -164,5 +174,45 @@ class Objects
         }
 
         return true;
+    }
+
+    public function validateObject(
+        string $postId,
+        bool $accepted = true,
+        string $reason = ""
+    ): bool {
+        $values = [];
+        $values["status"] = $accepted ? 1 : 5;
+        $status = $this->updateObject($postId, $values);
+
+        if (!$status) {
+            return false;
+        }
+
+        $filtersObjects = [["id", "=", $postId]];
+        $object = $this->getObjects($filtersObjects);
+
+        if (count($object) == 0) {
+            return false;
+        }
+
+        $membersModel = new Members();
+        $filtersMembers = [["id", "=", $object[0]["memberOwner_id"]]];
+        $members = $membersModel->getMembers($filtersMembers);
+
+        if (count($members) == 0) {
+            return false;
+        }
+
+        $message = "Bonjour!<br><br>";
+        $message .= "Votre publication '" . $object[0]["title"] . "' ";
+        $message .= $accepted ? "a été acceptée.<br><br>" : "a été refusée.<br><br>";
+        $message .= $accepted ?
+            "Elle est maintenant dispnobile et visible par tous.<br><br>" :
+            "La raison :<br>" . $reason . "<br><br>";
+        $message .= "Meilleures salutations.<br><br>L'équipe I Lost It";
+        $email = new Emails();
+
+        return $email->send($members[0]['email'], $message);
     }
 }
