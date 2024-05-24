@@ -29,13 +29,19 @@ $app->redirect('/home', '/');
 $app->group('/objects', function (RouteCollectorProxy $group) {
     $group->get('', [\ILostIt\Controller\ObjectsController::class, 'objectsPage']);
 
-    $group->get('/{id}', [\ILostIt\Controller\ObjectsController::class, 'objectPage']);
-
     $group->post('', [\ILostIt\Controller\ObjectsController::class, 'objectPost']);
 
-    $group->patch('/{id}', [\ILostIt\Controller\ObjectsController::class, 'objectPatch']);
+    $group->group('/{id}', function (RouteCollectorProxy $group) {
+        $group->get('', [\ILostIt\Controller\ObjectsController::class, 'objectPage']);
 
-    $group->delete('/{id}', [\ILostIt\Controller\ObjectsController::class, 'objectCancel']);
+        $group->
+            patch('/validation', [\ILostIt\Controller\ObjectsController::class, 'objectValidation'])
+            ->add(new UserIsMod());
+
+        $group->patch('', [\ILostIt\Controller\ObjectsController::class, 'objectPatch']);
+
+        $group->delete('', [\ILostIt\Controller\ObjectsController::class, 'objectCancel']);
+    });
 })->add(new UserNotLogged());
 
 $app->get('/solved-objects', [\ILostIt\Controller\ObjectsController::class, 'solvedObjects'])->add(new UserNotLogged());
@@ -47,9 +53,11 @@ $app->group('/auth', function (RouteCollectorProxy $group) {
 
         $group->post('', [\ILostIt\Controller\MembersController::class, 'register']);
 
-        $group->get('/verify/{id}', [\ILostIt\Controller\MembersController::class, 'verifyMemberPage']);
+        $group->group('/verify/{id}', function (RouteCollectorProxy $group) {
+            $group->get('', [\ILostIt\Controller\MembersController::class, 'verifyMemberPage']);
 
-        $group->patch('/verify/{id}', [\ILostIt\Controller\MembersController::class, 'verifyMember']);
+            $group->patch('', [\ILostIt\Controller\MembersController::class, 'verifyMember']);
+        });
     });
 
     $group->group('/login', function (RouteCollectorProxy $group) {
@@ -61,7 +69,7 @@ $app->redirect('/auth', '/auth/login');
 
 # Mod route
 $app->group('/mod', function (RouteCollectorProxy $group) {
-    $group->get('', [\ILostIt\Controller\ModController::class, 'get']);
+    $group->get('', [\ILostIt\Controller\ModController::class, 'objectsAwaitingValidation']);
 })->add(new UserNotLogged())->add(new UserIsMod());
 
 $app->addBodyParsingMiddleware();

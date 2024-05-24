@@ -18,6 +18,7 @@ namespace ILostIt\View;
                             <ul class="splide__list">
                                 <?php
                                 foreach ($objects as $object) :
+                                    $id = $object['id'];
                                     $title = $object['title'];
                                     $description = $object['description'];
                                     $image = $object['images'][0] ?? null;
@@ -33,11 +34,13 @@ namespace ILostIt\View;
                                                 shadow-lg
                                                 flex
                                                 flex-col
-                                                space-y-
+                                                space-y-5
                                             "
                                         >
                                             <img
-                                                src="<?=!isset($image) ? "src/img/base_image.png" : $image?>"
+                                                src="src/img/<?=!isset($image) ?
+                                                    "base_image.png" :
+                                                    "objects/" . $id . "/" . $image?>"
                                                 alt="Object image"
                                                 class="w-[150px] mx-auto"
                                             >
@@ -64,15 +67,20 @@ namespace ILostIt\View;
 </div>
 
 <script>
+    const nbObjects = <?=count($objects)?>
+
     /* Last posts slider - Home */
-    let sliderHome = new Splide('#sliderHome', {
+    const attributes = {
         type: 'loop',
         pagination: false,
         perMove: 1
-    })
+    }
+
+    const sliderHome = new Splide('#sliderHome', attributes)
 
     function changeNbOfPostsBasedOnWidth()
     {
+
         if (window.innerWidth > 425) {
             sliderHome.options.perPage = 2
         }

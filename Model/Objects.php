@@ -18,7 +18,17 @@ class Objects
      */
     public function getObjects(array $filters = [], int $page = 1, int $count = 0, array $orderBy = []): array
     {
-        $columnsObject = array("id", "title", "description", "classroom", "brand", "color", "value");
+        $columnsObject = array(
+            "id",
+            "title",
+            "description",
+            "classroom",
+            "brand",
+            "color",
+            "value",
+            "status",
+            "memberOwner_id"
+        );
         $columnsImages = array("name");
 
         $db = new Database();
@@ -99,10 +109,18 @@ class Objects
             );
         }
 
+        $membersModel = new Members();
+        $filtersMembers = [["id", "=", $publishedObject["memberOwner_id"]]];
+        $members = $membersModel->getMembers($filtersMembers);
+
+        if (count($members) == 0) {
+            return false;
+        }
+
         // ends db connection for security
         $db = false;
 
-        $userEmail = $_SESSION["email"];
+        $userEmail = $members[0]["email"];
         $subject = "Votre nouvelle publication !";
         $message = "Bonjour!<br><br>";
         $message .= "Tout d'abord, nous apprécions la confiance que vous fournissez en notre plateforme.<br><br>";
@@ -113,9 +131,8 @@ class Objects
         $message .= "Merci!<br><br>Meilleures salutations.<br>L'équipe I Lost It";
 
         $email = new Emails();
-        $email->send($userEmail, $message, $subject);
 
-        return true;
+        return $email->send($userEmail, $message, $subject);
     }
 
     /**
@@ -135,11 +152,7 @@ class Objects
         // ends db connection for security
         $db = false;
 
-        if (!$status) {
-            return false;
-        }
-
-        return true;
+        return $status;
     }
 
     /**
@@ -150,19 +163,57 @@ class Objects
      */
     public function deleteObject(string $postId): bool
     {
-        $conditions = array(["id", "=", $postId]);
+        $values = ["status" => "4"];
 
-        $db = new Database();
+        return $this->updateObject($postId, $values);
+    }
 
-        $status = $db->delete($this->objectsTable, $conditions);
-
-        // ends db connection for security
-        $db = false;
+    /**
+     * This method is designed to validate an object
+     *
+     * @param string $postId
+     * @param bool $accepted
+     * @param string $reason
+     * @return bool
+     */
+    public function validateObject(
+        string $postId,
+        bool $accepted = true,
+        string $reason = ""
+    ): bool {
+        $values = [
+            "status" => $accepted ? 1 : 5
+        ];
+        $status = $this->updateObject($postId, $values);
 
         if (!$status) {
             return false;
         }
 
-        return true;
+        $filtersObjects = [["id", "=", $postId]];
+        $object = $this->getObjects($filtersObjects);
+
+        if (count($object) == 0) {
+            return false;
+        }
+
+        $membersModel = new Members();
+        $filtersMembers = [["id", "=", $object[0]["memberOwner_id"]]];
+        $members = $membersModel->getMembers($filtersMembers);
+
+        if (count($members) == 0) {
+            return false;
+        }
+
+        $message = "Bonjour!<br><br>";
+        $message .= "Votre publication '" . $object[0]["title"] . "' ";
+        $message .= $accepted ? "a été acceptée.<br><br>" : "a été refusée.<br><br>";
+        $message .= $accepted ?
+            "Elle est maintenant dispnobile et visible par tous.<br><br>" :
+            "La raison :<br>" . $reason . "<br><br>";
+        $message .= "Meilleures salutations.<br><br>L'équipe I Lost It";
+        $email = new Emails();
+
+        return $email->send($members[0]['email'], $message);
     }
 }

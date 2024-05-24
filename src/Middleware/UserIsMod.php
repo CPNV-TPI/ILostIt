@@ -11,7 +11,7 @@ class UserIsMod
 {
     public function __invoke(Request $request, RequestHandler $handler): ResponseInterface
     {
-        if ($_SESSION["isMod"] != 1) {
+        if (isset($_SESSION["isMod"]) && $_SESSION["isMod"] != 1) {
             $response = new Response();
 
             return $response->withHeader("Location", "/")->withStatus(302);

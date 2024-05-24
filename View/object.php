@@ -82,10 +82,116 @@ namespace ILostIt\View;
             </div>
         </div>
 
-        <a
-            href="/posts/<?=$object['id']?>"
-            class="absolute bg-primary text-white w-11/12 py-3 text-center"
-        >Je l'ai trouvé !</a>
+        <?php if ($object['status'] == 1) : ?>
+            <a
+                href="/posts/<?=$object['id']?>"
+                class="absolute bg-primary text-white w-11/12 py-3 text-center"
+            >Je l'ai trouvé !</a>
+        <?php endif; ?>
+
+        <?php if ($object['status'] == 0 && $_SESSION['isMod'] == 1) : ?>
+            <div class="absolute flex justify-around w-11/12">
+                <button id="accept_btn" class="bg-primary text-white w-5/12 py-3 text-center">Accepter</button>
+                <button id="refuse_btn" class="bg-red-500 text-white w-5/12 py-3 text-center">Refuser</button>
+            </div>
+
+            <div id="error" class="text-center text-red-500">
+
+            </div>
+
+            <dialog id="refuse_dialog">
+                <div class="dialog p-5 w-[300px] md:w-[500px]">
+                    <button
+                            id="refuse_dialog_close"
+                            class="text-gray-300 hover:text-red-600 absolute right-5 top-5 text-xl"
+                    >
+                        X
+                    </button>
+                    <form id="refuse_form" class="mt-10">
+                        <label
+                                for="reason"
+                                class="mb-2 after:content-['*'] after:text-red-600 after:text-sm"
+                        >Raison</label>
+                        <textarea
+                                id="reason"
+                                name="reason"
+                                class="w-full resize-y border-2 p-2"
+                                required
+                        ></textarea>
+                        <input
+                                type="submit"
+                                id="refuse_submit"
+                                class="bg-red-500 text-white w-full py-3 mt-2 text-center cursor-pointer"
+                                value="Refuser"
+                        >
+                    </form>
+                </div>
+            </dialog>
+            <script>
+                const accept_btn = document.getElementById('accept_btn')
+                const refuse_btn = document.getElementById('refuse_btn')
+                const refuse_dialog = document.getElementById('refuse_dialog')
+                const refuse_dialog_close = document.getElementById('refuse_dialog_close')
+                const refuse_form = document.getElementById('refuse_form')
+                const error = document.getElementById('error')
+
+                const apiUrl = '/objects/<?=$object['id']?>/validation'
+
+                /**
+                 * This function is designed to send the validation of the object
+                 * @returns {Promise<boolean>}
+                 */
+                const validateObject = async (form = null) => {
+                    let data;
+                    if (form != null) {
+                        data = new URLSearchParams(new FormData(form));
+                    }
+
+                    const response = await fetch(apiUrl, {
+                        method: 'PATCH',
+                        body: data
+                    })
+
+                    if (!response.ok) {
+                        error.innerHTML = "Une erreur est survenue !"
+
+                        return false
+                    }
+
+                    return true
+                }
+
+                /* Refuse form show */
+                refuse_btn.addEventListener('click', () => {
+                    refuse_dialog.showModal()
+                })
+
+                refuse_dialog_close.addEventListener('click', () => {
+                    refuse_dialog.close()
+                })
+
+                /* Submit validation */
+                accept_btn.addEventListener('click', () => {
+                    if(!validateObject()) {
+                        return
+                    }
+
+                    document.location.href = "/objects/<?=$object['id']?>"
+                    document.location.reload()
+                })
+
+                refuse_form.addEventListener('submit', (event) => {
+                    event.preventDefault()
+                    refuse_dialog.close()
+
+                    if(!validateObject(refuse_form)) {
+                        return
+                    }
+
+                    document.location.href = "/mod"
+                })
+            </script>
+        <?php endif; ?>
     </div>
 </div>
 

@@ -1,5 +1,7 @@
 <?php
 
+namespace ILostIt\tests;
+
 use ILostIt\Model\Members;
 use ILostIt\Model\Database;
 use PHPUnit\Framework\TestCase;
