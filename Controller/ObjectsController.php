@@ -285,12 +285,14 @@ class ObjectsController
         ResponseInterface $response,
         array $args
     ): ResponseInterface {
+        $body = $request->getParsedBody();
+        $message = $body['message'] ?? null;
+        $finderEmail = $_SESSION['email'];
         $objectId = $args['id'];
-        $userFinderEmail = $_SESSION['email'];
 
         $objectsModel = new Objects();
 
-        $status = $objectsModel->contactOwner($objectId, $userFinderEmail);
+        $status = $objectsModel->contactOwner($objectId, $finderEmail, $message);
 
         if (!$status) {
             return $this->objectPost($request, $response, $args);
