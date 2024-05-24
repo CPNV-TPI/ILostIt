@@ -125,12 +125,96 @@ class TestObjects extends TestCase
         $getObjects = $objects->getObjects($filters);
         $idObject = $getObjects[0]['id'];
 
-        $status = $objects->deleteObject($idObject);
+        $status = $objects->cancelObject($idObject);
 
         $getObjects = $objects->getObjects($filters);
         $objectStatus = $getObjects[0]['status'];
 
         $this->assertTrue($status);
         $this->assertEquals(4, $objectStatus);
+    }
+
+    public function testCanContactOwner()
+    {
+        $filters = [];
+
+        foreach ($this->object as $key => $value) {
+            if ($key == "memberOwner_id") {
+                break;
+            }
+
+            $filter = [$key, "=", $value];
+            $filters[] = $filter;
+        }
+
+        $objects = new Objects();
+        $object = $objects->getObjects($filters)[0];
+
+        $idObject = $object['id'];
+
+        $status = $objects->contactOwner($idObject);
+
+        $this->assertTrue($status);
+    }
+
+    public function testCanSolveObjectAlone()
+    {
+        $filters = [];
+
+        foreach ($this->object as $key => $value) {
+            if ($key == "memberOwner_id") {
+                break;
+            }
+
+            $filter = [$key, "=", $value];
+            $filters[] = $filter;
+        }
+
+        $objects = new Objects();
+        $object = $objects->getObjects($filters)[0];
+
+        $members = new Members();
+        $member = $members->getMembers()[0];
+
+        $idObject = $object['id'];
+
+        $status = $objects->solveObject($idObject, $member['id']);
+
+        $objects = $objects->getObjects($filters);
+
+        $this->assertTrue($status);
+        $this->assertEquals(3, $objects[0]['status']);
+        $this->assertEquals($objects[0]['memberOwner_id'], $objects[0]['memberFinder_id']);
+    }
+
+    public function testCanSolveObjectOtherUser()
+    {
+        $filters = [];
+
+        foreach ($this->object as $key => $value) {
+            if ($key == "memberOwner_id") {
+                break;
+            }
+
+            $filter = [$key, "=", $value];
+            $filters[] = $filter;
+        }
+
+        $objects = new Objects();
+        $object = $objects->getObjects($filters)[0];
+
+        $filterMembers = [["id", "!=", $object['memberOwner_id']]];
+        $members = new Members();
+        $member = $members->getMembers($filterMembers)[0];
+
+        $idObject = $object['id'];
+
+        $status = $objects->solveObject($idObject, $member['id'], $member['email']);
+
+        $objects = $objects->getObjects($filters);
+
+        $this->assertTrue($status);
+        $this->assertEquals(3, $objects[0]['status']);
+        $this->assertNotEquals($objects[0]['memberOwner_id'], $objects[0]['memberFinder_id']);
     }
 }

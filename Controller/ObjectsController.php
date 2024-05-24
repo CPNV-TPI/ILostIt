@@ -325,11 +325,11 @@ class ObjectsController
 
         $status = false;
         if ($finderEmail != null) {
-            $status = $objectsModel->solveObject($objectId, $finderEmail, $confirmSolve);
+            $status = $objectsModel->solveObject($objectId, $_SESSION['id'], $finderEmail, $confirmSolve);
         } elseif ($foundAlone) {
-            $status = $objectsModel->solveObject($objectId);
+            $status = $objectsModel->solveObject($objectId, $_SESSION['id']);
         } elseif ($confirmSolve) {
-            $status = $objectsModel->solveObject($objectId, $finderEmail, true);
+            $status = $objectsModel->solveObject($objectId, $_SESSION['id'], $finderEmail, true);
         }
 
         if (!$status) {
