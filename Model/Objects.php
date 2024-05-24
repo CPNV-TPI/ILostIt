@@ -131,9 +131,8 @@ class Objects
         $message .= "Merci!<br><br>Meilleures salutations.<br>L'équipe I Lost It";
 
         $email = new Emails();
-        $email->send($userEmail, $message, $subject);
 
-        return true;
+        return $email->send($userEmail, $message, $subject);
     }
 
     /**
@@ -153,11 +152,7 @@ class Objects
         // ends db connection for security
         $db = false;
 
-        if (!$status) {
-            return false;
-        }
-
-        return true;
+        return $status;
     }
 
     /**
@@ -168,29 +163,27 @@ class Objects
      */
     public function deleteObject(string $postId): bool
     {
-        $conditions = array(["id", "=", $postId]);
+        $values = ["status" => "4"];
 
-        $db = new Database();
-
-        $status = $db->delete($this->objectsTable, $conditions);
-
-        // ends db connection for security
-        $db = false;
-
-        if (!$status) {
-            return false;
-        }
-
-        return true;
+        return $this->updateObject($postId, $values);
     }
 
+    /**
+     * This method is designed to validate an object
+     *
+     * @param string $postId
+     * @param bool $accepted
+     * @param string $reason
+     * @return bool
+     */
     public function validateObject(
         string $postId,
         bool $accepted = true,
         string $reason = ""
     ): bool {
-        $values = [];
-        $values["status"] = $accepted ? 1 : 5;
+        $values = [
+            "status" => $accepted ? 1 : 5
+        ];
         $status = $this->updateObject($postId, $values);
 
         if (!$status) {
