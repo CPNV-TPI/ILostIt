@@ -83,10 +83,53 @@ namespace ILostIt\View;
         </div>
 
         <?php if ($object['status'] == 1) : ?>
-            <a
-                href="/posts/<?=$object['id']?>"
+            <button
+                id="found_btn"
                 class="absolute bg-primary text-white w-11/12 py-3 text-center"
-            >Je l'ai trouvé !</a>
+            >Je l'ai trouvé !</button>
+
+            <dialog id="message_dialog">
+                <div class="dialog p-5 w-[300px] md:w-[500px]">
+                    <button
+                            id="message_dialog_close"
+                            class="text-gray-300 hover:text-red-600 absolute right-5 top-5 text-xl"
+                    >
+                        X
+                    </button>
+                    <form id="message_form" action="/objects/<?=$object['id']?>/contact"  method="POST" class="mt-10">
+                        <label
+                                for="message"
+                                class="mb-2 after:content-['*'] after:text-red-600 after:text-sm"
+                        >Votre message</label>
+                        <textarea
+                                id="message"
+                                name="message"
+                                class="w-full resize-y border-2 p-2"
+                                required
+                        ></textarea>
+                        <input
+                                type="submit"
+                                id="message_submit"
+                                class="bg-primary text-white w-full py-3 mt-2 text-center cursor-pointer"
+                                value="Contacter"
+                        >
+                    </form>
+                </div>
+            </dialog>
+            <script>
+                const found_btn = document.getElementById('found_btn')
+                const message_dialog = document.getElementById('message_dialog')
+                const message_dialog_close = document.getElementById('message_dialog_close')
+
+                /* Message form show */
+                found_btn.addEventListener('click', () => {
+                    message_dialog.showModal()
+                })
+
+                message_dialog_close.addEventListener('click', () => {
+                    message_dialog.close()
+                })
+            </script>
         <?php endif; ?>
 
         <?php if ($object['status'] == 0 && $_SESSION['isMod'] == 1) : ?>
