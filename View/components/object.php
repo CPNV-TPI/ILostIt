@@ -1,4 +1,4 @@
-<a href="objects/<?=$objectId?>" class="w-full md:w-[350px] lg:w-[500px]">
+<a href="/objects/<?=$objectId?>" class="w-full md:w-[350px] lg:w-[500px]">
     <div class="post border-2 rounded-md p-4">
         <div class="content flex space-x-2">
             <div class="left flex flex-col w-3/12 items-center">
