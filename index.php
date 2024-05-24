@@ -34,6 +34,8 @@ $app->group('/objects', function (RouteCollectorProxy $group) {
     $group->group('/{id}', function (RouteCollectorProxy $group) {
         $group->get('', [\ILostIt\Controller\ObjectsController::class, 'objectPage']);
 
+        $group->post('/contact', [\ILostIt\Controller\ObjectsController::class, 'objectContact']);
+
         $group->
             patch('/validation', [\ILostIt\Controller\ObjectsController::class, 'objectValidation'])
             ->add(new UserIsMod());
