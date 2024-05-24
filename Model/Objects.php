@@ -16,8 +16,12 @@ class Objects
      * @param array $orderBy
      * @return array
      */
-    public function getObjects(array $filters = [], int $page = 1, int $count = 0, array $orderBy = []): array
-    {
+    public function getObjects(
+        array $filters = [],
+        int $page = 1,
+        int $count = 0,
+        array $orderBy = []
+    ): array {
         $columnsObject = array(
             "id",
             "title",
@@ -215,5 +219,46 @@ class Objects
         $email = new Emails();
 
         return $email->send($members[0]['email'], $message);
+    }
+
+    public function contactOwner(string $postId, string $userFinder): bool
+    {
+        $filers = [["id", "=", $postId]];
+        $objects = $this->getObjects($filers);
+
+        if (count($objects) == 0) {
+            return false;
+        }
+
+        $object = $objects[0];
+        $ownerId = $object["memberOwner_id"];
+
+        $filters = [["id", "=", $ownerId]];
+        $membersModel = new Members();
+        $members = $membersModel->getMembers($filters);
+
+        if (count($members) == 0) {
+            return false;
+        }
+
+        $owner = $members[0];
+        $ownerEmail = $owner["email"];
+
+        $email = new Emails();
+
+        $message = "Bonjour!<br><br>";
+        $message .= "Quelqu'un a peut-être trouvé l'objet de votre publication : '" . $object["title"] . "' !<br><br>";
+        $message .= "Contactez la personne par email -> " . $ownerEmail . "<br><br>";
+        $message .= "Espérons que ce soit la bonne personne !<br><br>";
+        $message .= "Meilleures salutations.<br>";
+        $message .= "L'équipe I Lost It";
+
+        $status = $email->send($ownerEmail, $message);
+
+        if (!$status) {
+            return false;
+        }
+
+        return true;
     }
 }
