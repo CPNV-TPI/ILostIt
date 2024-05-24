@@ -193,42 +193,6 @@ class Database
     }
 
     /**
-     * Method that handles the deactivation of lines (YOU NEED TO HAVE AN "active" FIELD FOR IT TO WORK !)
-     *
-     * @param  string $table
-     * @param  array $conditions Example -> array(
-     *  ["column1", "sql_operator", "%value1%"],
-     *  ["column1", "sql_operator", "%value1%"]
-     * ) /!\ FILTERS ARE EXCLUSIVELY ANDs !
-     * @return bool
-     */
-    public function delete(string $table, array $conditions): bool
-    {
-        $sql = "UPDATE " . $table . " SET active = 0 WHERE ";
-
-        // Define the positions for the values using the columns names
-        foreach ($conditions as $key => $condition) {
-            if ($key != 0) {
-                $sql .= " AND ";
-            }
-
-            $sql .= $condition[0] . " " . $condition[1] . " \"" . $condition[2] . "\"";
-        }
-
-        $sql .= ";";
-
-        $db = $this->dbConnection();
-
-        try {
-            $db->exec($sql);
-        } catch (Exception $e) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * Method that creates the connection to the database using PDO
      *
      * @return PDO
