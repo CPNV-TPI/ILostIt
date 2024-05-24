@@ -38,9 +38,8 @@ $app->group('/objects', function (RouteCollectorProxy $group) {
 
         $group->post('/contact', [\ILostIt\Controller\ObjectsController::class, 'objectContact']);
 
-        $group->
-            patch('/validation', [\ILostIt\Controller\ObjectsController::class, 'objectValidation'])
-            ->add(new UserIsMod());
+        $group->patch('/validation', [\ILostIt\Controller\ObjectsController::class, 'objectValidation'])
+                ->add(new UserIsMod());
 
         $group->patch('/solve', [\ILostIt\Controller\ObjectsController::class, 'solveObject']);
 
