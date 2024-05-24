@@ -15,7 +15,7 @@ namespace ILostIt\View;
     const status = document.getElementById('status')
     const timer = document.getElementById('timer')
     const seconds = document.getElementById('seconds')
-    const apiUrl = 'http://localhost:8080/auth/register/verify/<?=$id?>'
+    const apiUrl = '/auth/register/verify/<?=$id?>'
     let redirectInSeconds = 5
 
     document.addEventListener('DOMContentLoaded', function () {
