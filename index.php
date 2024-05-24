@@ -80,6 +80,8 @@ $app->group('/mod', function (RouteCollectorProxy $group) {
 # Account route
 $app->group('/account', function (RouteCollectorProxy $group) {
     $group->get('/my-objects', [\ILostIt\Controller\ObjectsController::class, 'ownObjects']);
+
+    $group->get('/logout', [\ILostIt\Controller\MembersController::class, 'logout']);
 })->add(new UserNotLogged());
 
 $app->addBodyParsingMiddleware();

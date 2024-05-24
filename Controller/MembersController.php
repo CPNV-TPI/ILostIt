@@ -6,9 +6,20 @@ use ILostIt\Model\Members;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Views\PhpRenderer;
+use Throwable;
 
 class MembersController
 {
+    /**
+     * This method returns the register page
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @param string $error
+     * @return ResponseInterface
+     * @throws Throwable
+     */
     public function registerPage(
         ServerRequestInterface $request,
         ResponseInterface $response,
@@ -18,6 +29,15 @@ class MembersController
         return $this->render($response, 'S\'enregistrer', 'register', [], $error);
     }
 
+    /**
+     * This method handles the user register request
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @return ResponseInterface
+     * @throws Throwable
+     */
     public function register(
         ServerRequestInterface $request,
         ResponseInterface $response,
@@ -51,6 +71,16 @@ class MembersController
         return $response->withHeader('Location', '/')->withStatus(302);
     }
 
+    /**
+     * This method returns the login page
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @param string $error
+     * @return ResponseInterface
+     * @throws Throwable
+     */
     public function loginPage(
         ServerRequestInterface $request,
         ResponseInterface $response,
@@ -60,6 +90,15 @@ class MembersController
         return $this->render($response, 'Se connecter', 'login', [], $error);
     }
 
+    /**
+     * This method handles the login request
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @return ResponseInterface
+     * @throws Throwable
+     */
     public function login(
         ServerRequestInterface $request,
         ResponseInterface $response,
@@ -96,16 +135,33 @@ class MembersController
         return $response->withHeader('Location', '/')->withStatus(302);
     }
 
+    /**
+     * This method returns the verify member page
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @return ResponseInterface
+     * @throws Throwable
+     */
     public function verifyMemberPage(
         ServerRequestInterface $request,
         ResponseInterface $response,
         array $args
     ): ResponseInterface {
-        $attributes = [ "id" =>  $args['id'] ];
+        $attributes = ["id" => $args['id']];
 
         return $this->render($response, 'Vérifiez votre compte', 'verify', $attributes);
     }
 
+    /**
+     * This method handles the verify member request
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @return ResponseInterface
+     */
     public function verifyMember(
         ServerRequestInterface $request,
         ResponseInterface $response,
@@ -123,6 +179,35 @@ class MembersController
         return $response->withStatus(200);
     }
 
+    /**
+     * This method handles the logout request
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @return ResponseInterface
+     */
+    public function logout(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
+        session_destroy();
+
+        return $response->withHeader('Location', '/')->withStatus(302);
+    }
+
+    /**
+     * This method is designed to render a view
+     *
+     * @param ResponseInterface $response
+     * @param string $title
+     * @param string $page
+     * @param array $attributes
+     * @param string $error
+     * @return ResponseInterface
+     * @throws Throwable
+     */
     private function render(
         ResponseInterface $response,
         string $title,
