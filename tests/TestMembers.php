@@ -48,7 +48,22 @@ class TestMembers extends TestCase
         $this->assertCount($expectedMembers, $members->getMembers());
     }
 
-    public function testCanMemberLoginWithNonExistingUser()
+    public function testCannotRegisterNewMemberWithMissingValues()
+    {
+        $values = [
+            "firstName" => "John",
+            "lastName" => "Blower",
+            "password" => "password",
+        ];
+
+        $members = new Members();
+
+        $insertMember = $members->registerNewMember($values);
+
+        $this->assertIsString($insertMember);
+    }
+
+    public function testCannotLoginWithNonExistingUser()
     {
         $members = new Members();
 
@@ -60,7 +75,7 @@ class TestMembers extends TestCase
         $this->assertIsString($loginResult);
     }
 
-    public function testCanMemberLoginWithValidCredentialsAndAccountNotVerified()
+    public function testCannotLoginWithValidCredentialsAndAccountNotVerified()
     {
         $members = new Members();
 
@@ -70,7 +85,7 @@ class TestMembers extends TestCase
         $this->assertIsString($loginResult);
     }
 
-    public function testCanMemberLoginWithValidCredentialsAndAccountVerified()
+    public function testCanLoginWithValidCredentialsAndAccountVerified()
     {
         $members = new Members();
 
@@ -88,7 +103,7 @@ class TestMembers extends TestCase
         $this->assertIsArray($loginResult);
     }
 
-    public function testCanMemberLoginWithInvalidEmail()
+    public function testCannotLoginWithInvalidEmail()
     {
         $members = new Members();
 
@@ -100,7 +115,7 @@ class TestMembers extends TestCase
         $this->assertIsString($loginResult);
     }
 
-    public function testCanMemberLoginWithInvalidPassword()
+    public function testCannotLoginWithInvalidPassword()
     {
         $members = new Members();
 
