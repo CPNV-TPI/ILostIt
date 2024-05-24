@@ -60,6 +60,7 @@ class Emails
         $mail->isSMTP();
         $mail->Host = $this->host;
         $mail->SMTPAuth = true;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $mail->Username = $this->username;
         $mail->Password = $this->password;
         $mail->Port = $this->port;
