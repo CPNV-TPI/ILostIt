@@ -6,16 +6,18 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ILostIt\Model\Objects;
 use Slim\Views\PhpRenderer;
+use Throwable;
 
 class ObjectsController
 {
     /**
      * Returns the objects page
      *
-     * @param  ServerRequestInterface $request
-     * @param  ResponseInterface $response
-     * @param  array $args
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
      * @return ResponseInterface
+     * @throws Throwable
      */
     public function objectsPage(
         ServerRequestInterface $request,
@@ -25,10 +27,10 @@ class ObjectsController
         // Get the link params
         $params = $request->getQueryParams();
 
-        $filters = array(["status", "=", 1]);
+        $filters = [["status", "=", 1]];
 
         if (isset($params['type'])) {
-            $filters[] = array("type", "=", $params['type']);
+            $filters[] = ["type", "=", $params['type']];
         }
 
         $objectsModel = new Objects();
@@ -58,22 +60,22 @@ class ObjectsController
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @param array $args
+     * @param string $error
      * @return ResponseInterface
+     * @throws Throwable
      */
     public function objectPage(
         ServerRequestInterface $request,
         ResponseInterface $response,
-        array $args
+        array $args,
+        string $error = ""
     ): ResponseInterface {
-        // Get the link params
-        $params = $request->getQueryParams();
-
-        $filters = array(["id", "=", $args['id']]);
+        $filters = [["id", "=", $args['id']]];
 
         $objectsModel = new Objects();
         $object = $objectsModel->getObjects($filters)[0];
 
-        return $this->render($response, $object["title"], "object", ["object" => $object]);
+        return $this->render($response, $object["title"], "object", ["object" => $object], $error);
     }
 
     /**
@@ -83,6 +85,7 @@ class ObjectsController
      * @param ResponseInterface $response
      * @param array $args
      * @return ResponseInterface
+     * @throws Throwable
      */
     public function solvedObjects(
         ServerRequestInterface $request,
@@ -92,10 +95,10 @@ class ObjectsController
         // Get the link params
         $params = $request->getQueryParams();
 
-        $filters = array(["status", "=", 3]);
+        $filters = [["status", "=", 3]];
 
         if (isset($params['type'])) {
-            $filters[] = array("type", "=", $params['type']);
+            $filters[] = ["type", "=", $params['type']];
         }
 
         $objectsModel = new Objects();
@@ -120,6 +123,76 @@ class ObjectsController
     }
 
     /**
+     * This method is designed to return the own objects page
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @return ResponseInterface
+     * @throws Throwable
+     */
+    public function ownObjects(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
+        // Get the link params
+        $params = $request->getQueryParams();
+
+        $userId = $_SESSION['id'];
+        $filters = [["memberOwner_id", "=", $userId]];
+
+        if (isset($params['type'])) {
+            $filters[] = ["type", "=", $params['type']];
+        }
+
+        if (isset($params['status'])) {
+            $filters[] = ["status", "=", $params['status']];
+        }
+
+        $objectsModel = new Objects();
+        $page = isset($params['page']) && is_numeric($params['page']) ? $params['page'] : 1;
+        $nbObjects = 12;
+        $objects = $objectsModel->getObjects($filters, $page, $nbObjects);
+
+        $canBeANextPage = count($objects) == $nbObjects ?
+            count($objectsModel->getObjects($filters, $page + 1, $nbObjects)) :
+            false;
+
+        $nextPage = $canBeANextPage == 0 ? null : $page + 1;
+        $previousPage = $page > 1 ? $page - 1 : null;
+        $attributes = [
+            "objects" => $objects,
+            "nextPage" => $nextPage,
+            "previousPage" => $previousPage,
+            "byType" => $params['type'] ?? null,
+            "byStatus" => $params['status'] ?? null,
+        ];
+
+        return $this->render($response, "Mes objets", "my-objects", $attributes);
+    }
+
+    /**
+     * This function is designed to show the solve page
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @return ResponseInterface
+     * @throws Throwable
+     */
+    public function solvePage(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
+        $id = $args['id'];
+
+        $attributes = ['id' => $id];
+        return $this->render($response, "Résolution", "solve", $attributes);
+    }
+
+    /**
      * Handler for route /objects via POST method
      *
      * @param  ServerRequestInterface $request
@@ -134,7 +207,6 @@ class ObjectsController
     ): ResponseInterface {
         $body = $request->getParsedBody();
         $values = [];
-        $home = new HomeController();
 
         foreach ($body as $key => $content) {
             if ($content != "") {
@@ -200,12 +272,19 @@ class ObjectsController
         return $response->withStatus(200);
     }
 
+    /**
+     * This method is designed to handle the contact form of an object
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @return ResponseInterface
+     */
     public function objectContact(
         ServerRequestInterface $request,
         ResponseInterface $response,
         array $args
     ): ResponseInterface {
-        $body = $request->getParsedBody();
         $objectId = $args['id'];
         $userFinderEmail = $_SESSION['email'];
 
@@ -214,43 +293,50 @@ class ObjectsController
         $status = $objectsModel->contactOwner($objectId, $userFinderEmail);
 
         if (!$status) {
-            return $response->withHeader("Location", "/objects/" . $objectId . "/?error=true")->withStatus(302);
+            return $this->objectPost($request, $response, $args);
         }
 
         return $response->withHeader("Location", "/objects")->withStatus(302);
     }
 
     /**
-     * Handler for route /objects via PATCH method
+     * This method is designed to handle the resolution of an object
      *
-     * @param  ServerRequestInterface $request
-     * @param  ResponseInterface $response
-     * @param  array $args
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
      * @return ResponseInterface
      */
-    public function objectPatch(
+    public function solveObject(
         ServerRequestInterface $request,
         ResponseInterface $response,
         array $args
     ): ResponseInterface {
         $body = $request->getParsedBody();
-        $values = array();
-        $id = $args['id'];
+        $finderEmail = isset($body['finder_email']) && $body['finder_email'] != "" ? $body['finder_email'] : null;
+        $foundAlone = isset($body['found_alone']) && $body['found_alone'];
 
-        foreach ($body as $key => $content) {
-            if ($key == 'title' || $key == 'description' || $key == 'classroom') {
-                $values = array_merge($values, array($key => $content));
-            }
-        }
+        $params = $request->getQueryParams();
+        $confirmSolve = isset($params['confirm']) && $params['confirm'] == "true";
+
+        $objectId = $args['id'];
 
         $objectsModel = new Objects();
-        $status = $objectsModel->updateObject($id, $values);
 
-        if ($status) {
-            return $response->withStatus(200);
+        $status = false;
+        if ($finderEmail != null) {
+            $status = $objectsModel->solveObject($objectId, $finderEmail, $confirmSolve);
+        } elseif ($foundAlone) {
+            $status = $objectsModel->solveObject($objectId);
+        } elseif ($confirmSolve) {
+            $status = $objectsModel->solveObject($objectId, $finderEmail, true);
         }
 
-        return $response->withStatus(500);
+        if (!$status) {
+            return $response->withStatus(500);
+        }
+
+        return $response->withStatus(200);
     }
 
     /**
@@ -269,15 +355,13 @@ class ObjectsController
         $id = $args['id'];
 
         $objectsModel = new Objects();
-        $status = $objectsModel->deleteObject($id);
+        $status = $objectsModel->cancelObject($id);
 
-        $response->getBody()->write("<script>window.location.replace('/objects');</script>");
-
-        if ($status) {
-            return $response->withStatus(200);
+        if (!$status) {
+            return $response->withStatus(500);
         }
 
-        return $response->withStatus(500);
+        return $response->withStatus(200);
     }
 
     /**
@@ -289,6 +373,7 @@ class ObjectsController
      * @param array $attributes
      * @param string $error
      * @return ResponseInterface
+     * @throws Throwable
      */
     private function render(
         ResponseInterface $response,
