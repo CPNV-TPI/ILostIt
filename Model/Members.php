@@ -50,12 +50,15 @@ class Members
         $user = $this->getMembers($filters)[0];
 
         $mail = new Emails();
-
         $subject = "Vérifier votre email !";
+
+        $env = parse_ini_file('.env.local');
+        $hostname = $env["HOSTNAME"];
+
         $message = "Bonjour!<br/><br/>Tout d'abord, bienvenue !<br/><br/>";
         $message .= "Pour accéder à notre site, vous devez tout d'abord vérifier votre email !<br/><br/>";
         $message .= "Pour cela, veuillez appuier sur le lien suivant : ";
-        $message .= "http://localhost:8080/auth/register/verify/" . $user["id"];
+        $message .= "https://" . $hostname . "/auth/register/verify/" . $user["id"];
 
         return $mail->send($memberInformations["email"], $message, $subject);
     }
