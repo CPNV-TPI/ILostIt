@@ -31,7 +31,8 @@ class Objects
             "color",
             "value",
             "status",
-            "memberOwner_id"
+            "memberOwner_id",
+            "memberFinder_id"
         );
         $columnsImages = array("name");
 
@@ -234,8 +235,7 @@ class Objects
      * @return bool
      */
     public function contactOwner(
-        string $postId,
-        string $userFinder
+        string $postId
     ): bool {
         $filers = [["id", "=", $postId]];
         $objects = $this->getObjects($filers);
@@ -280,16 +280,18 @@ class Objects
      * This method is designed to solve an object
      *
      * @param string $postId
+     * @param int|null userId
      * @param string|null $finderEmail
      * @param bool $confirmSolve
      * @return bool
      */
     public function solveObject(
         string $postId,
+        int $userId = null,
         string $finderEmail = null,
         bool $confirmSolve = false
     ): bool {
-        $finderId = $finderEmail == null ? $_SESSION['id'] : null;
+        $finderId = $finderEmail == null ? $userId : null;
         $values = [];
 
         if ($finderEmail != null) {
@@ -324,7 +326,7 @@ class Objects
             $values['memberFinder_id'] = $finderId;
         }
 
-        $values["status"] = $confirmSolve || $finderId == $_SESSION['id'] ? 3 : 2;
+        $values["status"] = $confirmSolve || $finderId == $userId ? 3 : 2;
 
         return $this->updateObject($postId, $values);
     }
