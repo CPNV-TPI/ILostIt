@@ -82,14 +82,214 @@ namespace ILostIt\View;
             </div>
         </div>
 
-        <?php if ($object['status'] == 1) : ?>
-            <a
-                href="/posts/<?=$object['id']?>"
-                class="absolute bg-primary text-white w-11/12 py-3 text-center"
-            >Je l'ai trouvé !</a>
+        <?php if (isset($error) && $error != null) : ?>
+            <div class="error text-red-500 text-center">
+                <?=$error?>
+            </div>
         <?php endif; ?>
 
-        <?php if ($object['status'] == 0 && $_SESSION['isMod'] == 1) : ?>
+        <?php if ($object['status'] == 1 && $object['memberOwner_id'] == $_SESSION['id']) : ?>
+            <div class="flex justify-around">
+                <button
+                        id="found_btn"
+                        class="bg-primary text-white w-5/12 py-3 text-center"
+                >Objet trouvé !</button>
+
+                <button
+                        id="delete_btn"
+                        class="bg-red-500 text-white w-5/12 py-3 text-center"
+                >Supprimer</button>
+            </div>
+
+            <dialog id="delete_dialog">
+                <div class="dialog p-5 w-[300px] md:w-[500px]">
+                    <div class="text-center text-2xl mb-10">
+                        Êtes vous sur ?
+                    </div>
+
+                    <div class="flex justify-around">
+                        <button
+                                id="delete_confirm"
+                                class="bg-red-500 text-white w-5/12 py-3 mt-2 text-center cursor-pointer"
+                        >
+                            Oui
+                        </button>
+                        <button
+                                id="delete_quit"
+                                class="bg-primary text-white w-5/12 py-3 mt-2 text-center cursor-pointer"
+                        >
+                            Non
+                        </button>
+                    </div>
+                </div>
+            </dialog>
+
+            <dialog id="found_dialog">
+                <div class="dialog p-5 w-[300px] md:w-[500px]">
+                    <button
+                            id="found_dialog_close"
+                            class="text-gray-300 hover:text-red-600 absolute right-5 top-5 text-xl"
+                    >
+                        X
+                    </button>
+                    <form id="found_form" method="POST" class="mt-10">
+                        <label
+                                for="finder_email"
+                                class="mb-2 after:content-['*'] after:text-red-600 after:text-sm"
+                        >Email de l'utilisateur vous ayant aidé :</label>
+                        <input
+                                type="email"
+                                name="finder_email"
+                                id="finder_email"
+                                class="w-full border-2 p-2 mb-5"
+                                pattern="([a-z]+)\.([a-z]+[\-]*[0-9]*)+(@eduvaud\.ch)"
+                                required
+                        >
+
+                        <input type="checkbox" id="found_alone" name="found_alone" class="mr-2 mb-5">
+                        <label for="found_alone">Je l'ai trouvé moi même</label>
+
+                        <input
+                                type="submit"
+                                id="found_submit"
+                                class="bg-primary text-white w-full py-3 mt-2 text-center cursor-pointer"
+                                value="Retrouvé"
+                        >
+                    </form>
+                </div>
+            </dialog>
+
+            <script>
+                /* Delete dialog */
+                const delete_btn = document.getElementById('delete_btn')
+                const delete_dialog = document.getElementById('delete_dialog')
+                const delete_quit = document.getElementById('delete_quit')
+                const delete_confirm = document.getElementById('delete_confirm')
+
+                delete_btn.addEventListener('click', () => {
+                    delete_dialog.showModal()
+                })
+
+                delete_quit.addEventListener('click', () => {
+                    delete_dialog.close()
+                })
+
+                delete_confirm.addEventListener('click', async () => {
+                    const apiUrl = "/objects/<?=$object['id']?>";
+
+                    const response = await fetch(apiUrl, {
+                        method: 'DELETE'
+                    })
+
+                    if (!response.ok) {
+                        error.innerHTML = "Une erreur est survenue !"
+
+                        return false
+                    }
+
+                    document.location.href = "/account/my-objects"
+                })
+
+                /* Found dialog */
+                const found_btn = document.getElementById('found_btn')
+                const found_dialog = document.getElementById('found_dialog')
+                const found_dialog_close = document.getElementById('found_dialog_close')
+                const found_form = document.getElementById('found_form')
+                const found_alone = document.getElementById('found_alone')
+                const finder_email = document.getElementById('finder_email')
+
+                found_btn.addEventListener('click', () => {
+                    found_dialog.showModal()
+                })
+
+                found_dialog_close.addEventListener('click', () => {
+                    found_dialog.close()
+                })
+
+                finder_email.addEventListener('input', () => {
+                    found_alone.disabled = finder_email.value !== "";
+                })
+
+                found_alone.addEventListener('click', () => {
+                    if (found_alone.checked) {
+                        finder_email.value = ""
+                    }
+
+                    finder_email.disabled = found_alone.checked;
+                })
+
+                found_form.addEventListener('submit', async (event) => {
+                    event.preventDefault()
+                    found_dialog.close()
+
+                    const apiUrl = "/objects/<?=$object['id']?>/solve";
+                    const data = new URLSearchParams(new FormData(form));
+
+                    const response = await fetch(apiUrl, {
+                        method: 'PATCH',
+                        body: data
+                    })
+
+                    if (!response.ok) {
+                        error.innerHTML = "Une erreur est survenue !"
+
+                        return false
+                    }
+
+                    document.location.href = "/account/my-objects"
+                })
+            </script>
+
+        <?php elseif ($object['status'] == 1) : ?>
+            <button
+                id="found_btn"
+                class="absolute bg-primary text-white w-11/12 py-3 text-center"
+            >Je l'ai trouvé !</button>
+
+            <dialog id="message_dialog">
+                <div class="dialog p-5 w-[300px] md:w-[500px]">
+                    <button
+                            id="message_dialog_close"
+                            class="text-gray-300 hover:text-red-600 absolute right-5 top-5 text-xl"
+                    >
+                        X
+                    </button>
+                    <form id="message_form" action="/objects/<?=$object['id']?>/contact"  method="POST" class="mt-10">
+                        <label
+                                for="message"
+                                class="mb-2 after:content-['*'] after:text-red-600 after:text-sm"
+                        >Votre message</label>
+                        <textarea
+                                id="message"
+                                name="message"
+                                class="w-full resize-y border-2 p-2"
+                                required
+                        ></textarea>
+                        <input
+                                type="submit"
+                                id="message_submit"
+                                class="bg-primary text-white w-full py-3 mt-2 text-center cursor-pointer"
+                                value="Contacter"
+                        >
+                    </form>
+                </div>
+            </dialog>
+            <script>
+                const found_btn = document.getElementById('found_btn')
+                const message_dialog = document.getElementById('message_dialog')
+                const message_dialog_close = document.getElementById('message_dialog_close')
+
+                /* Message form show */
+                found_btn.addEventListener('click', () => {
+                    message_dialog.showModal()
+                })
+
+                message_dialog_close.addEventListener('click', () => {
+                    message_dialog.close()
+                })
+            </script>
+
+        <?php elseif ($object['status'] == 0 && $_SESSION['isMod'] == 1) : ?>
             <div class="absolute flex justify-around w-11/12">
                 <button id="accept_btn" class="bg-primary text-white w-5/12 py-3 text-center">Accepter</button>
                 <button id="refuse_btn" class="bg-red-500 text-white w-5/12 py-3 text-center">Refuser</button>

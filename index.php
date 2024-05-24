@@ -34,9 +34,14 @@ $app->group('/objects', function (RouteCollectorProxy $group) {
     $group->group('/{id}', function (RouteCollectorProxy $group) {
         $group->get('', [\ILostIt\Controller\ObjectsController::class, 'objectPage']);
 
-        $group->
-            patch('/validation', [\ILostIt\Controller\ObjectsController::class, 'objectValidation'])
-            ->add(new UserIsMod());
+        $group->get('/solve', [\ILostIt\Controller\ObjectsController::class, 'solvePage']);
+
+        $group->post('/contact', [\ILostIt\Controller\ObjectsController::class, 'objectContact']);
+
+        $group->patch('/validation', [\ILostIt\Controller\ObjectsController::class, 'objectValidation'])
+                ->add(new UserIsMod());
+
+        $group->patch('/solve', [\ILostIt\Controller\ObjectsController::class, 'solveObject']);
 
         $group->patch('', [\ILostIt\Controller\ObjectsController::class, 'objectPatch']);
 
@@ -71,6 +76,11 @@ $app->redirect('/auth', '/auth/login');
 $app->group('/mod', function (RouteCollectorProxy $group) {
     $group->get('', [\ILostIt\Controller\ModController::class, 'objectsAwaitingValidation']);
 })->add(new UserNotLogged())->add(new UserIsMod());
+
+# Account route
+$app->group('/account', function (RouteCollectorProxy $group) {
+    $group->get('/my-objects', [\ILostIt\Controller\ObjectsController::class, 'ownObjects']);
+})->add(new UserNotLogged());
 
 $app->addBodyParsingMiddleware();
 $errorMiddleware = $app->addErrorMiddleware(true, true, true);

@@ -16,8 +16,12 @@ class Objects
      * @param array $orderBy
      * @return array
      */
-    public function getObjects(array $filters = [], int $page = 1, int $count = 0, array $orderBy = []): array
-    {
+    public function getObjects(
+        array $filters = [],
+        int $page = 1,
+        int $count = 0,
+        array $orderBy = []
+    ): array {
         $columnsObject = array(
             "id",
             "title",
@@ -63,8 +67,10 @@ class Objects
      * @param array $images
      * @return bool
      */
-    public function publishObject(array $values, array $images): bool
-    {
+    public function publishObject(
+        array $values,
+        array $images
+    ): bool {
         $db = new Database();
         $status = $db->insert($this->objectsTable, $values);
 
@@ -142,8 +148,10 @@ class Objects
      * @param  array $values
      * @return bool
      */
-    public function updateObject(string $postId, array $values): bool
-    {
+    public function updateObject(
+        string $postId,
+        array $values
+    ): bool {
         $conditions = array(["id", "=", $postId]);
 
         $db = new Database();
@@ -161,8 +169,9 @@ class Objects
      * @param  string $postId
      * @return bool
      */
-    public function deleteObject(string $postId): bool
-    {
+    public function cancelObject(
+        string $postId
+    ): bool {
         $values = ["status" => "4"];
 
         return $this->updateObject($postId, $values);
@@ -215,5 +224,108 @@ class Objects
         $email = new Emails();
 
         return $email->send($members[0]['email'], $message);
+    }
+
+    /**
+     * This method is designed to contact the owner of an object
+     *
+     * @param string $postId
+     * @param string $userFinder
+     * @return bool
+     */
+    public function contactOwner(
+        string $postId,
+        string $userFinder
+    ): bool {
+        $filers = [["id", "=", $postId]];
+        $objects = $this->getObjects($filers);
+
+        if (count($objects) == 0) {
+            return false;
+        }
+
+        $object = $objects[0];
+        $ownerId = $object["memberOwner_id"];
+
+        $filters = [["id", "=", $ownerId]];
+        $membersModel = new Members();
+        $members = $membersModel->getMembers($filters);
+
+        if (count($members) == 0) {
+            return false;
+        }
+
+        $owner = $members[0];
+        $ownerEmail = $owner["email"];
+
+        $email = new Emails();
+
+        $message = "Bonjour!<br><br>";
+        $message .= "Quelqu'un a peut-être trouvé l'objet de votre publication : '" . $object["title"] . "' !<br><br>";
+        $message .= "Contactez la personne par email -> " . $ownerEmail . "<br><br>";
+        $message .= "Espérons que ce soit la bonne personne !<br><br>";
+        $message .= "Meilleures salutations.<br>";
+        $message .= "L'équipe I Lost It";
+
+        $status = $email->send($ownerEmail, $message);
+
+        if (!$status) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * This method is designed to solve an object
+     *
+     * @param string $postId
+     * @param string|null $finderEmail
+     * @param bool $confirmSolve
+     * @return bool
+     */
+    public function solveObject(
+        string $postId,
+        string $finderEmail = null,
+        bool $confirmSolve = false
+    ): bool {
+        $finderId = $finderEmail == null ? $_SESSION['id'] : null;
+        $values = [];
+
+        if ($finderEmail != null) {
+            $filers = [
+                ["email", "=", $finderEmail]
+            ];
+
+            $membersModel = new Members();
+            $members = $membersModel->getMembers($filers);
+
+            if (empty($members)) {
+                return false;
+            }
+
+            $member = $members[0];
+            $finderId = $member["id"];
+
+            $message = "Bonjour!<br><br>";
+            $message .= "Vous avez aidé un utilisateur à retrouver son objet, merci à vous !<br><br>";
+            $message .= "Une dernière petite étape et ce sera tout bon :<br>";
+            $message .= "-> Veuillez appuyer sur ce lien pour confirmer votre aide : ";
+            $message .= "http://localhost:8080/objects/" . $postId . "/solve?confirm=true <br><br>";
+            $message .= "Nous vous remercions beaucoup pour votre aide !<br><br>";
+            $message .= "Meilleures salutations.<br>";
+            $message .= "L'équipe I Lost It";
+
+            $email = new Emails();
+            $email->send($finderEmail, $message);
+        }
+
+        if (!$confirmSolve) {
+            $values['memberFinder_id'] = $finderId;
+        }
+
+        $values["status"] = $confirmSolve || $finderId == $_SESSION['id'] ? 3 : 2;
+
+        return $this->updateObject($postId, $values);
     }
 }
