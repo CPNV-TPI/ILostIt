@@ -63,7 +63,7 @@ $links = [
 
                 <?php if (isset($_SESSION['email'])) : ?>
                     <button id="post_btn" class="px-2 py-4 lg:py-px">Publier une annonce</button>
-                    <a href="#" class="py-4 lg:py-0">
+                    <a href="/account/my-objects" class="py-4 lg:py-0">
                         <i class="fa-solid fa-user pr-2"></i>
                         <?php if (!empty($_SESSION['firstname']) && !empty($_SESSION['lastname'])) : ?>
                             <?=$_SESSION['firstname']?>
@@ -72,6 +72,7 @@ $links = [
                             <?=$_SESSION['email']?>
                         <?php endif; ?>
                     </a>
+                    <a href="/account/logout" class="py-4 lg:py-0">Se déconnecter</a>
                 <?php endif;?>
             </div>
         </div>
