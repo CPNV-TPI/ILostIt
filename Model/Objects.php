@@ -231,11 +231,14 @@ class Objects
      * This method is designed to contact the owner of an object
      *
      * @param string $postId
-     * @param string $userFinder
+     * @param string $finderEmail
+     * @param string|null $message
      * @return bool
      */
     public function contactOwner(
-        string $postId
+        string $postId,
+        string $finderEmail,
+        string $message = null
     ): bool {
         $filers = [["id", "=", $postId]];
         $objects = $this->getObjects($filers);
@@ -260,14 +263,20 @@ class Objects
 
         $email = new Emails();
 
-        $message = "Bonjour!<br><br>";
-        $message .= "Quelqu'un a peut-être trouvé l'objet de votre publication : '" . $object["title"] . "' !<br><br>";
-        $message .= "Contactez la personne par email -> " . $ownerEmail . "<br><br>";
-        $message .= "Espérons que ce soit la bonne personne !<br><br>";
-        $message .= "Meilleures salutations.<br>";
-        $message .= "L'équipe I Lost It";
+        $emailMessage = "Bonjour!<br><br>";
+        $emailMessage .= "Quelqu'un a peut-être trouvé l'objet de votre publication : '" .
+            $object["title"] .
+            "' !<br><br>"
+        ;
+        $emailMessage .= "Contactez la personne par email -> " . $finderEmail . "<br><br>";
 
-        $status = $email->send($ownerEmail, $message);
+        $emailMessage .= $message != null ? "Voici ce qu'il vous a écrit :<br>" . $message : "";
+
+        $emailMessage .= "<br><br>Espérons que ce soit la bonne personne !<br><br>";
+        $emailMessage .= "Meilleures salutations.<br>";
+        $emailMessage .= "L'équipe I Lost It";
+
+        $status = $email->send($ownerEmail, $emailMessage);
 
         if (!$status) {
             return false;
@@ -280,7 +289,7 @@ class Objects
      * This method is designed to solve an object
      *
      * @param string $postId
-     * @param int|null userId
+     * @param int|null $userId
      * @param string|null $finderEmail
      * @param bool $confirmSolve
      * @return bool
@@ -309,11 +318,14 @@ class Objects
             $member = $members[0];
             $finderId = $member["id"];
 
+            $env = parse_ini_file('.env.local');
+            $hostname = $env["HOSTNAME"];
+
             $message = "Bonjour!<br><br>";
             $message .= "Vous avez aidé un utilisateur à retrouver son objet, merci à vous !<br><br>";
             $message .= "Une dernière petite étape et ce sera tout bon :<br>";
             $message .= "-> Veuillez appuyer sur ce lien pour confirmer votre aide : ";
-            $message .= "http://localhost:8080/objects/" . $postId . "/solve?confirm=true <br><br>";
+            $message .= "https://" . $hostname . "/objects/" . $postId . "/solve?confirm=true <br><br>";
             $message .= "Nous vous remercions beaucoup pour votre aide !<br><br>";
             $message .= "Meilleures salutations.<br>";
             $message .= "L'équipe I Lost It";
