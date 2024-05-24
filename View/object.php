@@ -223,7 +223,7 @@ namespace ILostIt\View;
                     found_dialog.close()
 
                     const apiUrl = "/objects/<?=$object['id']?>/solve";
-                    const data = new URLSearchParams(new FormData(form));
+                    const data = new URLSearchParams(new FormData(found_form));
 
                     const response = await fetch(apiUrl, {
                         method: 'PATCH',
