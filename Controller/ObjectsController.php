@@ -166,6 +166,14 @@ class ObjectsController
         return $response->withHeader("Location", "/?created=true")->withStatus(302);
     }
 
+    /**
+     * This method is designed to handle the validation of an object
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @return ResponseInterface
+     */
     public function objectValidation(
         ServerRequestInterface $request,
         ResponseInterface $response,
@@ -190,6 +198,26 @@ class ObjectsController
         }
 
         return $response->withStatus(200);
+    }
+
+    public function objectContact(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
+        $body = $request->getParsedBody();
+        $objectId = $args['id'];
+        $userFinderEmail = $_SESSION['email'];
+
+        $objectsModel = new Objects();
+
+        $status = $objectsModel->contactOwner($objectId, $userFinderEmail);
+
+        if (!$status) {
+            return $response->withHeader("Location", "/objects/" . $objectId . "/?error=true")->withStatus(302);
+        }
+
+        return $response->withHeader("Location", "/objects")->withStatus(302);
     }
 
     /**
