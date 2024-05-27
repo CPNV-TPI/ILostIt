@@ -151,8 +151,9 @@ class TestObjects extends TestCase
         $object = $objects->getObjects($filters)[0];
 
         $idObject = $object['id'];
+        $finderEmail = "john@doe.com";
 
-        $status = $objects->contactOwner($idObject);
+        $status = $objects->contactOwner($idObject, $finderEmail);
 
         $this->assertTrue($status);
     }
