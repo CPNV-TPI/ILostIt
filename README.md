@@ -108,7 +108,7 @@ and modify ```AllowOverride None ``` to ```AllowOverride All ```
 
 #### 3. Environment variables
 
-Please follow the **Configuration** category above.
+Please follow the [**Configuration**](https://github.com/CPNV-TPI/ILostIt/tree/develop?tab=readme-ov-file#1-environment-variables) category above.
 
 ## Directory structure
 
