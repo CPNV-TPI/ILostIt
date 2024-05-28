@@ -106,6 +106,8 @@ Find the following lines
 
 and modify ```AllowOverride None ``` to ```AllowOverride All ```
 
+After that, save the file and restart Apache 2 service : ```sudo systemctl restart apache2```
+
 #### 3. Environment variables
 
 Please follow the [**Configuration**](https://github.com/CPNV-TPI/ILostIt/tree/develop?tab=readme-ov-file#1-environment-variables) category above.
