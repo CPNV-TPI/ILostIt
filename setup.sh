@@ -4,7 +4,6 @@ sudo apt update && sudo apt upgrade;
 
 # Installs required packages to be able to install php8.3
 sudo apt install ca-certificates apt-transport-https software-properties-common lsb-release -y;
-sudo apt install curl -y;
 curl -sSL https://packages.sury.org/php/README.txt | sudo bash -x;
 
 # Updates the lists
@@ -17,7 +16,7 @@ sudo apt install apache2 php8.3 php8.3-mysql php8.3-zip unzip git mariadb-server
 sudo systemctl restart apache2;
 
 # Installs composer
-curl -sS https://getcomposer.org/installer -o composer-setup.php;
+wget -q -O composer-setup.php https://getcomposer.org/installer;
 php -r "if (hash_file('sha384', 'composer-setup.php') === 'dac665fdc30fdd8ec78b38b9800061b4150413ff2e3b6f88543c636f7cd84f6db9189d43a81e5503cda447da73c7e5b6') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;";
 php composer-setup.php;
 php -r "unlink('composer-setup.php');";
