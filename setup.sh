@@ -35,7 +35,7 @@ sudo mv ~/ILostIt /var/www/html;
 cd /var/www/html;
 
 # Won't be here if it was real deployment as it should only get from main
-git switch develop;
+git switch release/1.0.0;
 
 # Installs the required dependencies
 composer install --no-dev;
