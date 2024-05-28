@@ -15,7 +15,7 @@ This project is a web app designed to help students and teachers from the CPNV (
 
 ### Configuration
 
-#### 1 - Environment variables
+#### 1. Environment variables
 For this project to work, you'll need to have a .env file, named exactly ".env.local", in Model folder.
 
 ````dotenv
@@ -81,6 +81,34 @@ After that, you can now open your IDE and work ! You are now ready !
 ### On integration environment
 
 The tutorial below is made for Debian 12. Be aware that it can work on other distros, but I can't assume it will at 100%.
+
+#### 1. Run the setup script
+```bash
+wget https://raw.githubusercontent.com/CPNV-TPI/ILostIt/feature/AutomaticSetup/setup.sh
+chmod +x setup.sh
+./setup.sh
+```
+
+#### 2. Allow .htaccess (Configuration overriding)
+```bash
+sudo nano /etc/apache2/apache2.conf
+```
+
+Find the following lines
+
+```bash
+<Directory /var/www/>
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+</Directory>
+```
+
+and modify ```AllowOverride None ``` to ```AllowOverride All ```
+
+#### 3. Environment variables
+
+Please follow the **Configuration** category above.
 
 ## Directory structure
 
