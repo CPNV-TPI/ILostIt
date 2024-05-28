@@ -9,6 +9,7 @@ This project is a web app designed to help students and teachers from the CPNV (
 
 - MariaDB v10.11.7 (LTS)
 - PhpStorm 2024.1.1
+- HeidiSQL (or any other DB editor that accepts MariaDB)
 - PHP v8.3.6
 - Composer v2.7.3
 
@@ -18,7 +19,7 @@ This project is a web app designed to help students and teachers from the CPNV (
 For this project to work, you'll need to have a .env file, named exactly ".env.local", in Model folder.
 
 ````dotenv
-HOSTNAME="localhost" # For example
+HOSTNAME="localhost" # For example (/!\ Without http:// or https://)
 
 DB_HOST="HOSTNAME"
 DB_PORT="" # Generally 3306
@@ -35,33 +36,51 @@ MAIL_PASSWORD="THE_USER_PASSWORD"
 ## Deployment
 
 ### On dev environment
-
 All the tutorials below are for Windows.
 
 #### 1. PHP
-1. Download PHP on this following link -> https://windows.php.net/downloads/releases/php-8.3.7-nts-Win32-vs16-x64.zip
-2. Extract the folder in your C: and rename the folder to **php**
-3. Rename the file php.ini-development to php.ini
-4. Adding the PHP folder to the Windows path environment variable -> https://help.learnosity.com/hc/en-us/articles/360000757757-Environment-Setup-Guide-PHP#installing-php-on-windows-1011
+To install PHP, you can follow this tutorial : https://help.learnosity.com/hc/en-us/articles/360000757757-Environment-Setup-Guide-PHP#installing-php-on-windows-1011
 
 #### 2. Composer
 For this, you can follow this tutorial directly made by Composer team : https://getcomposer.org/doc/00-intro.md#using-the-installer
 
-#### 2. PHPStorm
+#### 3. Git
+To install Git, you can follow the tutorial present on this page under "Installing on Windows" : https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
+
+#### 4. PHPStorm
 1. Download PHPStorm on this following link (you'll probably need to create an account) -> https://www.jetbrains.com/fr-fr/phpstorm/
 2. Make the basic installation of the program (no modifications have been made on my side)
 3. Configure PHP in the settings -> https://www.jetbrains.com/help/phpstorm/configuring-local-interpreter.html
 
-#### 3. MariaDB
+#### 5. MariaDB
 1. To install MariaDB, you can follow this link : https://mariadb.com/kb/en/installing-mariadb-msi-packages-on-windows/
-2. To create the database, execute the file DDS_TPI_ILostIt_Db.sql available in database folder
 
-#### 4. Run Composer to install packages
-Finally, after installing all the things above, if you open this project and click on composer.json file, you should be able to install the packages by clicking on the "install" button in the top right corner.
+#### 6. HeidiSQL
+1. Install HeidiSQL using this link : https://www.heidisql.com/download.php?download=installer
+2. Make the basic installation, no modification is needed
+3. Open the application and try connecting to the database previously installed and configured
+4. Click on File > Load a SQL file... > Select the file named DDS_TPI_ILostIt_Db.sql (in database folder) > click on Run.
+   <br> Right-click on the left side of the app and click on refresh, the database named ***ilostit*** should appear.
+
+#### 7. Download Project and install packages
+Now, choose a folder where you want to download this project. Open a CMD and type the following commands :
+
+```bash
+git pull https://github.com/CPNV-TPI/ILostIt.git
+cd ILostIt
+
+git flow init # All by default
+
+php composer.phar install
+
+php -S localhost:8080
+```
+
+After that, you can now open your IDE and work ! You are now ready !
 
 ### On integration environment
 
-TBD
+The tutorial below is made for Debian 12. Be aware that it can work on other distros, but I can't assume it will at 100%.
 
 ## Directory structure
 
