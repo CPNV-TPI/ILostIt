@@ -107,7 +107,7 @@ class Objects
             }
 
             if (!is_dir($imageDirectory)) {
-                mkdir($imageDirectory, 0777, true);
+                mkdir($imageDirectory, 0755, true);
             }
 
             move_uploaded_file(
