@@ -4,11 +4,11 @@ namespace ILostIt;
 
 session_start();
 
-use ILostIt\src\Middleware\UserIsMod;
-use ILostIt\src\Middleware\UserLogged;
-use ILostIt\src\Middleware\UserNotLogged;
-use Slim\Middleware\MethodOverrideMiddleware;
+use ILostIt\Middleware\UserIsMod;
+use ILostIt\Middleware\UserLogged;
+use ILostIt\Middleware\UserNotLogged;
 use Slim\Factory\AppFactory;
+use Slim\Middleware\MethodOverrideMiddleware;
 use Slim\Routing\RouteCollectorProxy;
 
 require __DIR__ . '/vendor/autoload.php';

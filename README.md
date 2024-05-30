@@ -121,6 +121,7 @@ Please follow the [**Configuration**](https://github.com/CPNV-TPI/ILostIt/tree/d
     ├── docs
         ├── database       # Contains MCD - MLD
         ├── design         # Contains mockups and graphical charter
+    ├── Middleware
     ├── Model
     ├── src/
         ├── css

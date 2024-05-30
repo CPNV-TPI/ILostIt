@@ -1,10 +1,10 @@
 <?php
 
-namespace ILostIt\src\Middleware;
+namespace ILostIt\Middleware;
 
+use Psr\Http\Message\ResponseInterface as ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
-use Psr\Http\Message\ResponseInterface as ResponseInterface;
 use Slim\Psr7\Response as Response;
 
 class UserNotLogged

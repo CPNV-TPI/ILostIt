@@ -1,17 +1,17 @@
 <?php
 
-namespace ILostIt\src\Middleware;
+namespace ILostIt\Middleware;
 
+use Psr\Http\Message\ResponseInterface as ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
-use Psr\Http\Message\ResponseInterface as ResponseInterface;
 use Slim\Psr7\Response as Response;
 
-class UserLogged
+class UserIsMod
 {
     public function __invoke(Request $request, RequestHandler $handler): ResponseInterface
     {
-        if (isset($_SESSION["id"])) {
+        if (isset($_SESSION["isMod"]) && $_SESSION["isMod"] != 1) {
             $response = new Response();
 
             return $response->withHeader("Location", "/")->withStatus(302);
